@@ -1,0 +1,93 @@
+---
+title: |
+  | Final Project
+  | DS 807: Modeling Unstructured Data
+author: |
+  | Your Name Goes Here
+output: html_document
+---
+
+## Data Requirements:
+
+- You can pick any type of data that satisfies **at least one** of the following criteria:
+
+    1. Text Data
+    2. Image Data
+    3. Unsupervised Data
+
+
+- Some sources are:
+
+    - Kaggle <https://www.kaggle.com/datasets>
+    - UCI Machine Learning Repository <https://archive.ics.uci.edu/ml/index.php>
+    
+- Read your data in R.
+
+```{r}
+
+```
+
+## The grading rubric can be found below:
+
++----------------+---------------+--------------------+-----------------------+
+|                | R code        | Decision/Why       | Communication         |
+|                |               |                    |  of findings          |
++================+===============+====================+=======================+
+| Percentage of  | 30%           | 35%                | 35%                   |
+| Assigned Points|               |                    |                       |
++----------------+---------------+--------------------+-----------------------+
+
+
+- **Decision/why?**: Explain your reasoning behind your choice of the procedure, set of variables and such for the question. 
+
+    - Explain why you use the procedure/model/variables
+    - To exceed this criterion, describe steps taken to implement the procedure in a non technical way.
+
+
+- **Communication of your findings**: Explain your results.
+
+    - Explain why you think one model is better than the other.
+    - To exceed this criterion, explain your model in a non technical way.
+
+## Note
+
+- Since there is a great range of potential data, the instructions are written in a general way. If some steps do not make sense in your case, please reach out to verify.
+
+## Part 1: Exploratory Data Analysis (20 points)
+
+1. Explain the purpose of the analysis *for your data*, i.e., what are you trying to achieve?
+
+2. Check for existence of NA's (missing data)
+
+3. Use appropriate plots for EDA, i.e., word counts for text data.
+
+4. Do you need to scale your data or do you need dimension reduction? If so, perform a principle components analysis on a scaled, or not-scaled data depending on your needs.
+
+## Part 2: Clustering (20 points)
+
+1. Develop a clustering algorithm for your data: Choose from topic models, k-means, k-medoids, hierarchical, or DBSCAN. 
+
+2. Explain your choices on model parameters, i.e. k, eps, minpts, and communicate your results.
+
+## Part 3: Mixture Models (20 points)
+
+1. Apply a mixture model based clustering to your data.
+
+2. Explain your choices on model parameters, and communicate your results.
+
+
+## Part 4: Deep Learning (20 points)
+
+1. Apply a type of neural network algorithm to your data.
+
+2. Explain your choices on model parameters, and communicate your results.
+
+
+## Part 5: Conclusion (20 points)
+
+1. (10 points) Based on the purpose of your analysis stated in Part 1, which analysis did a good/better/satisfactory job? How do you think you can improve the analysis?
+
+    
+2. (10 points) What are your learning outcomes for this assignment? Please focus on your learning outcomes in terms of analysis, model interpretations, and R skills - it is up to you to include this part in your presentation or not.
+
+
