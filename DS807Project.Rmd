@@ -3,9 +3,11 @@ title: |
   | Final Project
   | DS 807: Modeling Unstructured Data
 author: |
-  | Your Name Goes Here
+  | Anthony Morin, Nate Thomas
 output: html_document
 ---
+
+test
 
 ## Data Requirements:
 
