@@ -14,6 +14,7 @@ library(EnvStats)
 library(MASS)
 library(dbscan)
 library(factoextra)
+library(gam)
 ```
 
 ## Data Requirements:
@@ -157,11 +158,94 @@ p_4
 ```
 
 ```{r}
-############
-#smoothing.spline...
-############
+smooth.spline(rgbImage$x,rgbImage$r.value)
+smooth.spline(rgbImage$y,rgbImage$r.value)
+
+rdf <- mean(smooth.spline(rgbImage$x,rgbImage$r.value)$df,smooth.spline(rgbImage$y,rgbImage$r.value)$df)
+
+smooth.spline(rgbImage$x,rgbImage$g.value)
+smooth.spline(rgbImage$y,rgbImage$g.value)
+
+gdf <- mean(smooth.spline(rgbImage$x,rgbImage$g.value)$df,smooth.spline(x = rgbImage$y,rgbImage$g.value)$df)
+
+smooth.spline(rgbImage$x,rgbImage$b.value)
+smooth.spline(rgbImage$y,rgbImage$b.value)
+
+bdf <- mean(smooth.spline(rgbImage$x,rgbImage$b.value)$df,smooth.spline(rgbImage$y,rgbImage$b.value)$df)
+
+gam_red <- gam(c(r.value)~s(x,df=rdf)+s(y,df=rdf),data=rgbImage)
+gam_green <- gam(c(g.value)~s(x,df=gdf)+s(y,df=gdf),data=rgbImage)
+gam_blue <- gam(c(b.value)~s(x,df=bdf)+s(y,df=bdf),data=rgbImage)
+rgbImage$r.value_ss <- predict(gam_red, newdata=rgbImage)
+rgbImage$g.value_ss <- predict(gam_green, newdata=rgbImage)
+rgbImage$b.value_ss <- predict(gam_blue, newdata=rgbImage)
+
+rgbImage$b.value_ss[which(rgbImage$b.value_ss<0)] <- 0
+
+min(rgbImage$r.value_ss)
+max(rgbImage$r.value_ss)
+
+min(rgbImage$g.value_ss)
+max(rgbImage$g.value_ss)
+
+min(rgbImage$b.value_ss)
+max(rgbImage$b.value_ss)
+
+p_5 <- plot(y ~ x, data=rgbImage, main="bluejay - gone, smoothing spline",
+     col = rgb(rgbImage[c("r.value_ss", "g.value_ss", "b.value_ss")]),
+     asp = 1, pch = 15, cex = 0.3)
+p_5
+
+```
+```{r}
+eps <- 0.2
+rgbImage$r.value_ss_gone <- ifelse((abs(rgbImage[3] - rgbImage[6])>eps),1,rgbImage$r.value_ss)
+rgbImage$g.value_ss_gone <- ifelse((abs(rgbImage[4] - rgbImage[7])>eps),1,rgbImage$g.value_ss)
+rgbImage$b.value_ss_gone <- ifelse((abs(rgbImage[5] - rgbImage[8])>eps),1,rgbImage$b.value_ss)
+
+p_6 <- plot(y ~ x, data=rgbImage, main="bluejay - gone, smoothing spline",
+     col = rgb(rgbImage[c("r.value_ss_gone", "g.value_ss_gone", "b.value_ss_gone")]),
+     asp = 1, pch = 15, cex = 0.3)
+p_6
+```
+```{r}
+eps <- 0.3
+rgbImage$r.value_ss_gone <- ifelse((abs(rgbImage[3] - rgbImage[6])>eps),1,rgbImage$r.value_ss)
+rgbImage$g.value_ss_gone <- ifelse((abs(rgbImage[4] - rgbImage[7])>eps),1,rgbImage$g.value_ss)
+rgbImage$b.value_ss_gone <- ifelse((abs(rgbImage[5] - rgbImage[8])>eps),1,rgbImage$b.value_ss)
+
+p_7 <- plot(y ~ x, data=rgbImage, main="bluejay - gone, smoothing spline",
+     col = rgb(rgbImage[c("r.value_ss_gone", "g.value_ss_gone", "b.value_ss_gone")]),
+     asp = 1, pch = 15, cex = 0.3)
+p_7
+
+```
+```{r}
+eps <- 0.4
+rgbImage$r.value_ss_gone <- ifelse((abs(rgbImage[3] - rgbImage[6])>eps),1,rgbImage$r.value_ss)
+rgbImage$g.value_ss_gone <- ifelse((abs(rgbImage[4] - rgbImage[7])>eps),1,rgbImage$g.value_ss)
+rgbImage$b.value_ss_gone <- ifelse((abs(rgbImage[5] - rgbImage[8])>eps),1,rgbImage$b.value_ss)
+
+p_7 <- plot(y ~ x, data=rgbImage, main="bluejay - gone, smoothing spline",
+     col = rgb(rgbImage[c("r.value_ss_gone", "g.value_ss_gone", "b.value_ss_gone")]),
+     asp = 1, pch = 15, cex = 0.3)
+p_7
+
 ```
 
+
+```{r}
+eps <- 0.4
+rgbImage$r.value_ss_gone <- ifelse((abs(rgbImage[3] - rgbImage[6])>eps),1,rgbImage$r.value_ss)
+rgbImage$g.value_ss_gone <- ifelse((abs(rgbImage[4] - rgbImage[7])>eps),1,rgbImage$g.value_ss)
+rgbImage$b.value_ss_gone <- ifelse((abs(rgbImage[5] - rgbImage[8])>eps),1,rgbImage$b.value_ss)
+
+p_8 <- plot(y ~ x, data=rgbImage, main="bluejay - gone, smoothing spline",
+     col = rgb(rgbImage[c("r.value_ss_gone", "g.value_ss_gone", "b.value_ss_gone")]),
+     asp = 1, pch = 15, cex = 0.3)
+p_8
+
+```
 
 ```{r}
 imagedata=rgbImage[,3:5]
@@ -273,7 +357,7 @@ max(c_db1$cluster)
 
 removeZeros <- function(v){
   v[v !=0]
-}
+  }
 
 r_ <- rep(0,length(c_db1$cluster))
 g_ <- rep(0,length(c_db1$cluster))
@@ -314,7 +398,8 @@ rgbImage_dbscan <- data.frame(
   y=rep(dm[1]:1, dm[2]),
   r.value=as.vector(r_),
   g.value=as.vector(g_),
-  b.value=as.vector(b_))
+  b.value=as.vector(b_) )
+
 
 plot(y ~ x, data=rgbImage_dbscan, main=" ... ",
      col = rgb(rgbImage_dbscan[3:5]), 
