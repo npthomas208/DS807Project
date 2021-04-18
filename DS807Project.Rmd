@@ -80,9 +80,11 @@ rgbImage <- data.frame(
   g.value=as.vector(bluejay[,,2]),
   b.value=as.vector(bluejay[,,3]))
 
-p_0 <- plot(y ~ x, data=rgbImage, main="bluejay",
-     col = rgb(rgbImage[c("r.value", "g.value", "b.value")]),
-     asp = 1, pch = 15, cex = 0.3)
+p_0 <- ggplot(data=rgbImage, aes(x=x, y=y, col=rgb(r.value,g.value,b.value))) + 
+    ggtitle("bluejay")+
+    geom_point() + 
+    scale_color_identity()
+
 p_0
 ```
 2. Check for existence of NA's (missing data)
@@ -98,7 +100,7 @@ As can be seen above, the image is read in with each pixel defined.  This is ver
 
 ```{r}
 p_1 <- ggplot(rgbImage, aes(x=r.value))+
-  geom_histogram(bins = 100)
+  geom_histogram(bins = 100)+
 p_1
 ```
 ```{r}
@@ -124,9 +126,11 @@ rgbImage_blued <- data.frame(
   g.value=as.vector(rep(0,length(bluejay[,,2]))),
   b.value=as.vector(bluejay[,,3]))
 
-p_4 <- plot(y ~ x, data=rgbImage_blued, main="bluejay - blued",
-     col = rgb(rgbImage_blued[c("r.value", "g.value", "b.value")]),
-     asp = 1, pch = 15, cex = 0.3)
+p_4 <- ggplot(data=rgbImage_blued, aes(x=x, y=y, col=rgb(r.value,g.value,b.value))) + 
+    ggtitle("bluejay")+
+    geom_point() + 
+    scale_color_identity()
+
 p_4
 ```
 ```{r}
@@ -151,10 +155,12 @@ rgbImage_blued_max <- data.frame(
 
 rgbImage_blued_max$r.value[which.max(predict(lmxy,newdata=rgbImage_blued))] = 1
 
-p_4 <- plot(y ~ x, data=rgbImage_blued_max, main="bluejay - blued",
-     col = rgb(rgbImage_blued_max[c("r.value", "g.value", "b.value")]),
-     asp = 1, pch = 15, cex = 0.3)
-p_4
+p_5 <- ggplot(data=rgbImage_blued_max, aes(x=x, y=y, col=rgb(r.value,g.value,b.value))) + 
+    ggtitle("bluejay")+
+    geom_point() + 
+    scale_color_identity()
+
+p_5
 ```
 
 ```{r}
@@ -191,11 +197,12 @@ max(rgbImage$g.value_ss)
 min(rgbImage$b.value_ss)
 max(rgbImage$b.value_ss)
 
-p_5 <- plot(y ~ x, data=rgbImage, main="bluejay - gone, smoothing spline",
-     col = rgb(rgbImage[c("r.value_ss", "g.value_ss", "b.value_ss")]),
-     asp = 1, pch = 15, cex = 0.3)
-p_5
+p_6 <- ggplot(data=rgbImage, aes(x=x, y=y, col=rgb(r.value_ss,g.value_ss,b.value_ss))) + 
+    ggtitle("bluejay - gone")+
+    geom_point() + 
+    scale_color_identity()
 
+p_6
 ```
 ```{r}
 eps <- 0.2
@@ -203,10 +210,12 @@ rgbImage$r.value_ss_gone <- ifelse((abs(rgbImage[3] - rgbImage[6])>eps),1,rgbIma
 rgbImage$g.value_ss_gone <- ifelse((abs(rgbImage[4] - rgbImage[7])>eps),1,rgbImage$g.value_ss)
 rgbImage$b.value_ss_gone <- ifelse((abs(rgbImage[5] - rgbImage[8])>eps),1,rgbImage$b.value_ss)
 
-p_6 <- plot(y ~ x, data=rgbImage, main="bluejay - gone, smoothing spline",
-     col = rgb(rgbImage[c("r.value_ss_gone", "g.value_ss_gone", "b.value_ss_gone")]),
-     asp = 1, pch = 15, cex = 0.3)
-p_6
+p_7 <- ggplot(data=rgbImage, aes(x=x, y=y, col=rgb(r.value_ss_gone,g.value_ss_gone,b.value_ss_gone))) + 
+    ggtitle("bluejay - gone, smoothing spline")+
+    geom_point() + 
+    scale_color_identity()
+
+p_7
 ```
 ```{r}
 eps <- 0.3
@@ -214,37 +223,27 @@ rgbImage$r.value_ss_gone <- ifelse((abs(rgbImage[3] - rgbImage[6])>eps),1,rgbIma
 rgbImage$g.value_ss_gone <- ifelse((abs(rgbImage[4] - rgbImage[7])>eps),1,rgbImage$g.value_ss)
 rgbImage$b.value_ss_gone <- ifelse((abs(rgbImage[5] - rgbImage[8])>eps),1,rgbImage$b.value_ss)
 
-p_7 <- plot(y ~ x, data=rgbImage, main="bluejay - gone, smoothing spline",
-     col = rgb(rgbImage[c("r.value_ss_gone", "g.value_ss_gone", "b.value_ss_gone")]),
-     asp = 1, pch = 15, cex = 0.3)
-p_7
+p_8 <- ggplot(data=rgbImage, aes(x=x, y=y, col=rgb(r.value_ss_gone,g.value_ss_gone,b.value_ss_gone))) + 
+    ggtitle("bluejay - gone, smoothing spline")+
+    geom_point() + 
+    scale_color_identity()
 
-```
-```{r}
-eps <- 0.4
-rgbImage$r.value_ss_gone <- ifelse((abs(rgbImage[3] - rgbImage[6])>eps),1,rgbImage$r.value_ss)
-rgbImage$g.value_ss_gone <- ifelse((abs(rgbImage[4] - rgbImage[7])>eps),1,rgbImage$g.value_ss)
-rgbImage$b.value_ss_gone <- ifelse((abs(rgbImage[5] - rgbImage[8])>eps),1,rgbImage$b.value_ss)
-
-p_7 <- plot(y ~ x, data=rgbImage, main="bluejay - gone, smoothing spline",
-     col = rgb(rgbImage[c("r.value_ss_gone", "g.value_ss_gone", "b.value_ss_gone")]),
-     asp = 1, pch = 15, cex = 0.3)
-p_7
-
-```
-
-
-```{r}
-eps <- 0.4
-rgbImage$r.value_ss_gone <- ifelse((abs(rgbImage[3] - rgbImage[6])>eps),1,rgbImage$r.value_ss)
-rgbImage$g.value_ss_gone <- ifelse((abs(rgbImage[4] - rgbImage[7])>eps),1,rgbImage$g.value_ss)
-rgbImage$b.value_ss_gone <- ifelse((abs(rgbImage[5] - rgbImage[8])>eps),1,rgbImage$b.value_ss)
-
-p_8 <- plot(y ~ x, data=rgbImage, main="bluejay - gone, smoothing spline",
-     col = rgb(rgbImage[c("r.value_ss_gone", "g.value_ss_gone", "b.value_ss_gone")]),
-     asp = 1, pch = 15, cex = 0.3)
 p_8
+```
 
+
+```{r}
+eps <- 0.4
+rgbImage$r.value_ss_gone <- ifelse((abs(rgbImage[3] - rgbImage[6])>eps),1,rgbImage$r.value_ss)
+rgbImage$g.value_ss_gone <- ifelse((abs(rgbImage[4] - rgbImage[7])>eps),1,rgbImage$g.value_ss)
+rgbImage$b.value_ss_gone <- ifelse((abs(rgbImage[5] - rgbImage[8])>eps),1,rgbImage$b.value_ss)
+
+p_9 <- ggplot(data=rgbImage, aes(x=x, y=y, col=rgb(r.value_ss_gone,g.value_ss_gone,b.value_ss_gone))) + 
+    ggtitle("bluejay - gone, smoothing spline")+
+    geom_point() + 
+    scale_color_identity()
+
+p_9
 ```
 
 ```{r}
