@@ -7,7 +7,14 @@ author: |
 output: html_document
 ---
 
-test
+```{r}
+library(jpeg)
+library(ggplot2)
+library(EnvStats)
+library(MASS)
+library(dbscan)
+library(factoextra)
+```
 
 ## Data Requirements:
 
@@ -26,7 +33,8 @@ test
 - Read your data in R.
 
 ```{r}
-
+bluejay <- readJPEG("Images/Test/OIP.jfif")
+dm=dim(bluejay)
 ```
 
 ## The grading rubric can be found below:
@@ -55,19 +63,264 @@ test
 
 - Since there is a great range of potential data, the instructions are written in a general way. If some steps do not make sense in your case, please reach out to verify.
 
-## Part 1: Exploratory Data Analysis (20 points)
+## Part 1: Exploratory Data Analysis
 
 1. Explain the purpose of the analysis *for your data*, i.e., what are you trying to achieve?
 
+We have selected a blue jay image for analysis.  We will be analyzing this for color clustering, and endeavoring to locate and identify the blue jay with as little external information. 
+
+First, the image:
+
+```{r}
+rgbImage <- data.frame(
+  x=rep(1:dm[2], each=dm[1]),
+  y=rep(dm[1]:1, dm[2]),
+  r.value=as.vector(bluejay[,,1]),
+  g.value=as.vector(bluejay[,,2]),
+  b.value=as.vector(bluejay[,,3]))
+
+p_0 <- plot(y ~ x, data=rgbImage, main="bluejay",
+     col = rgb(rgbImage[c("r.value", "g.value", "b.value")]),
+     asp = 1, pch = 15, cex = 0.3)
+p_0
+```
 2. Check for existence of NA's (missing data)
+
+Performed explicitly:
+```{r}
+length(which(complete.cases(bluejay)))
+dim(bluejay)[1]*dim(bluejay)[2]*dim(bluejay)[3]
+``` 
+As can be seen above, the image is read in with each pixel defined.  This is verified since the number of cases is equal to the multiplied dimensionality: `y * x * n`. Where `x` is the x dimension of image array; `y` is the y dimension of the image, and `n` is the three color values: red, green, and blue [r,g,b].
 
 3. Use appropriate plots for EDA, i.e., word counts for text data.
 
+```{r}
+p_1 <- ggplot(rgbImage, aes(x=r.value))+
+  geom_histogram(bins = 100)
+p_1
+```
+```{r}
+p_2 <- ggplot(rgbImage, aes(x=g.value))+
+  geom_histogram(bins = 100)
+p_2
+
+```
+
+```{r}
+p_3 <- ggplot(rgbImage, aes(x=r.value))+
+  geom_histogram(bins = 100)
+p_3
+```
+
+As investigation, since we are looking at an image of a blue jay it may be of value to look only at the blue hue (isolation performed by zeroing `r.value`, and `g.value`)
+
+```{r}
+rgbImage_blued <- data.frame(
+  x=rep(1:dm[2], each=dm[1]),
+  y=rep(dm[1]:1, dm[2]),
+  r.value=as.vector(rep(0,length(bluejay[,,1]))),
+  g.value=as.vector(rep(0,length(bluejay[,,2]))),
+  b.value=as.vector(bluejay[,,3]))
+
+p_4 <- plot(y ~ x, data=rgbImage_blued, main="bluejay - blued",
+     col = rgb(rgbImage_blued[c("r.value", "g.value", "b.value")]),
+     asp = 1, pch = 15, cex = 0.3)
+p_4
+```
+```{r}
+rgbImage_blued$x2 <- rgbImage_blued$x^2
+rgbImage_blued$y2 <- rgbImage_blued$y^2
+rgbImage_blued$x3 <- rgbImage_blued$x^3
+rgbImage_blued$y3 <- rgbImage_blued$y^3
+
+
+
+lmxy <- lm(b.value~x+y+x2+y2+x3+y3, data = rgbImage_blued)
+
+rgbImage_blued$x[which.max(predict(lmxy,newdata=rgbImage_blued))]
+rgbImage_blued$y[which.max(predict(lmxy,newdata=rgbImage_blued))]
+
+rgbImage_blued_max <- data.frame(
+  x=rep(1:dm[2], each=dm[1]),
+  y=rep(dm[1]:1, dm[2]),
+  r.value=as.vector(rep(0,length(bluejay[,,1]))),
+  g.value=as.vector(rep(0,length(bluejay[,,2]))),
+  b.value=as.vector(bluejay[,,3]))
+
+rgbImage_blued_max$r.value[which.max(predict(lmxy,newdata=rgbImage_blued))] = 1
+
+p_4 <- plot(y ~ x, data=rgbImage_blued_max, main="bluejay - blued",
+     col = rgb(rgbImage_blued_max[c("r.value", "g.value", "b.value")]),
+     asp = 1, pch = 15, cex = 0.3)
+p_4
+```
+
+```{r}
+############
+#smoothing.spline...
+############
+```
+
+
+```{r}
+imagedata=rgbImage[,3:5]
+
+fviz_nbclust(imagedata, kmeans, method = "silhouette", k.max=4, nboot = 2)
+```
+
+```{r}
+image_c = kmeans(imagedata, 3)
+image_c$centers
+
+```
+
+```{r}
+colours <- rgb(image_c$centers[image_c$cluster, ])
+plot(y ~ x, data=rgbImage, main="bluejay - kmeans",
+     col = colours, 
+     asp = 1, pch = ".", cex=25)
+```
+
 4. Do you need to scale your data or do you need dimension reduction? If so, perform a principle components analysis on a scaled, or not-scaled data depending on your needs.
+
+Scaling is unnecessary since the `rgb` values are all scaled `[0,1]`.  
 
 ## Part 2: Clustering (20 points)
 
 1. Develop a clustering algorithm for your data: Choose from topic models, k-means, k-medoids, hierarchical, or DBSCAN. 
+
+```{r}
+eps = 10^c(-5:5)
+minPts = 2^c(1:7)
+hyper_grid <- expand.grid(eps = eps, minPts = minPts)
+for (i in 1:nrow(hyper_grid)) {
+  temp=dbscan(rgbImage[,3:5],eps=hyper_grid$eps[i],minPts = hyper_grid$minPts[i])
+  if (any(temp$cluster>2) && all(temp$cluster<300)){
+    c_db<-temp
+    break
+  }
+}
+```
+
+```{r}
+max(c_db$cluster)
+
+removeZeros <- function(v){
+  v[v !=0]
+}
+
+r_ <- rep(0,length(c_db$cluster))
+g_ <- rep(0,length(c_db$cluster))
+b_ <- rep(0,length(c_db$cluster))
+
+for (i in 1:max(c_db$cluster)){
+  c1 = c_db$cluster == i
+  if (is.nan(mean(removeZeros(as.vector(bluejay[,,1]*c1))))){
+    rtemp = 0
+  }
+  else {
+    rtemp = mean(removeZeros(as.vector(bluejay[,,1]*c1)))
+  }
+  if (is.nan(mean(removeZeros(as.vector(bluejay[,,2]*c1))))){
+    gtemp = 0
+  }
+  else {
+    gtemp = mean(removeZeros(as.vector(bluejay[,,2]*c1)))
+  }
+  if(is.nan(mean(removeZeros(as.vector(bluejay[,,3]*c1))))){
+    btemp = 0
+  }
+  else {
+    btemp = mean(removeZeros(as.vector(bluejay[,,3]*c1)))
+  }
+  r_ <- r_ + rtemp*c1
+  g_ <- g_ + gtemp*c1
+  b_ <- b_ + btemp*c1
+  if (any(is.nan(r_))){
+    print(which(is.nan(r_)))
+    print(i)
+    break
+  }
+}
+
+rgbImage_dbscan <- data.frame(
+  x=rep(1:dm[2], each=dm[1]),
+  y=rep(dm[1]:1, dm[2]),
+  r.value=as.vector(r_),
+  g.value=as.vector(g_),
+  b.value=as.vector(b_))
+
+plot(y ~ x, data=rgbImage_dbscan, main=" ... ",
+     col = rgb(rgbImage_dbscan[3:5]), 
+     asp = 1, pch = 15, cex=0.5)
+```
+```{r}
+eps = c(0.005,0.01,0.02,0.04,0.08)
+minPts = c(3,4,5,6,7)
+hyper_grid <- expand.grid(eps = eps, minPts = minPts)
+for (i in 1:nrow(hyper_grid)) {
+  temp=dbscan(rgbImage[,3:5],eps=hyper_grid$eps[i],minPts = hyper_grid$minPts[i])
+  if (any(temp$cluster>2) && all(temp$cluster<300)){
+    c_db1<-temp
+    break
+  }
+}
+```
+
+```{r}
+max(c_db1$cluster)
+
+removeZeros <- function(v){
+  v[v !=0]
+}
+
+r_ <- rep(0,length(c_db1$cluster))
+g_ <- rep(0,length(c_db1$cluster))
+b_ <- rep(0,length(c_db1$cluster))
+
+for (i in 1:max(c_db1$cluster)){
+  c1 = c_db1$cluster == i
+  if (is.nan(mean(removeZeros(as.vector(bluejay[,,1]*c1))))){
+    rtemp = 0
+  }
+  else {
+    rtemp = mean(removeZeros(as.vector(bluejay[,,1]*c1)))
+  }
+  if (is.nan(mean(removeZeros(as.vector(bluejay[,,2]*c1))))){
+    gtemp = 0
+  }
+  else {
+    gtemp = mean(removeZeros(as.vector(bluejay[,,2]*c1)))
+  }
+  if(is.nan(mean(removeZeros(as.vector(bluejay[,,3]*c1))))){
+    btemp = 0
+  }
+  else {
+    btemp = mean(removeZeros(as.vector(bluejay[,,3]*c1)))
+  }
+  r_ <- r_ + rtemp*c1
+  g_ <- g_ + gtemp*c1
+  b_ <- b_ + btemp*c1
+  if (any(is.nan(r_))){
+    print(which(is.nan(r_)))
+    print(i)
+    break
+  }
+}
+
+rgbImage_dbscan <- data.frame(
+  x=rep(1:dm[2], each=dm[1]),
+  y=rep(dm[1]:1, dm[2]),
+  r.value=as.vector(r_),
+  g.value=as.vector(g_),
+  b.value=as.vector(b_))
+
+plot(y ~ x, data=rgbImage_dbscan, main=" ... ",
+     col = rgb(rgbImage_dbscan[3:5]), 
+     asp = 1, pch = 15, cex=0.5)
+```
+
 
 2. Explain your choices on model parameters, i.e. k, eps, minpts, and communicate your results.
 
