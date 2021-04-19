@@ -100,7 +100,7 @@ As can be seen above, the image is read in with each pixel defined.  This is ver
 
 ```{r}
 p_1 <- ggplot(rgbImage, aes(x=r.value))+
-  geom_histogram(bins = 100)+
+  geom_histogram(bins = 100)
 p_1
 ```
 ```{r}
@@ -179,9 +179,9 @@ smooth.spline(rgbImage$y,rgbImage$b.value)
 
 bdf <- mean(smooth.spline(rgbImage$x,rgbImage$b.value)$df,smooth.spline(rgbImage$y,rgbImage$b.value)$df)
 
-gam_red <- gam(c(r.value)~s(x,df=rdf)+s(y,df=rdf),data=rgbImage)
-gam_green <- gam(c(g.value)~s(x,df=gdf)+s(y,df=gdf),data=rgbImage)
-gam_blue <- gam(c(b.value)~s(x,df=bdf)+s(y,df=bdf),data=rgbImage)
+gam_red <- gam(r.value~s(x,df=rdf)+s(y,df=rdf),data=rgbImage)
+gam_green <- gam(g.value~s(x,df=gdf)+s(y,df=gdf),data=rgbImage)
+gam_blue <- gam(b.value~s(x,df=bdf)+s(y,df=bdf),data=rgbImage)
 rgbImage$r.value_ss <- predict(gam_red, newdata=rgbImage)
 rgbImage$g.value_ss <- predict(gam_green, newdata=rgbImage)
 rgbImage$b.value_ss <- predict(gam_blue, newdata=rgbImage)
@@ -204,6 +204,8 @@ p_6 <- ggplot(data=rgbImage, aes(x=x, y=y, col=rgb(r.value_ss,g.value_ss,b.value
 
 p_6
 ```
+
+
 ```{r}
 eps <- 0.2
 rgbImage$r.value_ss_gone <- ifelse((abs(rgbImage[3] - rgbImage[6])>eps),1,rgbImage$r.value_ss)
