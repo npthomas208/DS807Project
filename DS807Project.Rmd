@@ -452,6 +452,7 @@ p_14 <- ggplot(data=rgbImage_dbscan, aes(x=x, y=y, col=rgb(r.value,g.value,b.val
     scale_color_identity()
 
 p_14
+#
 ```
 
 ## Part 4: Deep Learning (20 points)
