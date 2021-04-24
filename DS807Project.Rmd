@@ -112,7 +112,7 @@ p_2
 ```
 
 ```{r}
-p_3 <- ggplot(rgbImage, aes(x=r.value))+
+p_3 <- ggplot(rgbImage, aes(x=b.value))+
   geom_histogram(bins = 100)
 p_3
 ```
