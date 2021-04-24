@@ -15,6 +15,7 @@ library(MASS)
 library(dbscan)
 library(factoextra)
 library(gam)
+library(flexmix)
 ```
 
 ## Data Requirements:
@@ -179,9 +180,9 @@ smooth.spline(rgbImage$y,rgbImage$b.value)
 
 bdf <- mean(smooth.spline(rgbImage$x,rgbImage$b.value)$df,smooth.spline(rgbImage$y,rgbImage$b.value)$df)
 
-gam_red <- gam(r.value~s(x,df=rdf)+s(y,df=rdf),data=rgbImage)
-gam_green <- gam(g.value~s(x,df=gdf)+s(y,df=gdf),data=rgbImage)
-gam_blue <- gam(b.value~s(x,df=bdf)+s(y,df=bdf),data=rgbImage)
+gam_red <- gam(r.value~s(x,df=rdf,spar=1)+s(y,df=rdf,spar=1),data=rgbImage)
+gam_green <- gam(g.value~s(x,df=gdf,spar=1)+s(y,df=gdf,spar=1),data=rgbImage)
+gam_blue <- gam(b.value~s(x,df=bdf,spar=1)+s(y,df=bdf,spar=1),data=rgbImage)
 rgbImage$r.value_ss <- predict(gam_red, newdata=rgbImage)
 rgbImage$g.value_ss <- predict(gam_green, newdata=rgbImage)
 rgbImage$b.value_ss <- predict(gam_blue, newdata=rgbImage)
@@ -208,9 +209,9 @@ p_6
 
 ```{r}
 eps <- 0.2
-rgbImage$r.value_ss_gone <- ifelse((abs(rgbImage[3] - rgbImage[6])>eps),1,rgbImage$r.value_ss)
-rgbImage$g.value_ss_gone <- ifelse((abs(rgbImage[4] - rgbImage[7])>eps),1,rgbImage$g.value_ss)
-rgbImage$b.value_ss_gone <- ifelse((abs(rgbImage[5] - rgbImage[8])>eps),1,rgbImage$b.value_ss)
+rgbImage$r.value_ss_gone <- ifelse((abs(rgbImage[3] - rgbImage[6])>eps) | (abs(rgbImage[4] - rgbImage[7])>eps) | (abs(rgbImage[5] - rgbImage[8])>eps),0,rgbImage$r.value_ss)
+rgbImage$g.value_ss_gone <- ifelse((abs(rgbImage[3] - rgbImage[6])>eps) | (abs(rgbImage[4] - rgbImage[7])>eps) | (abs(rgbImage[5] - rgbImage[8])>eps),0,rgbImage$g.value_ss)
+rgbImage$b.value_ss_gone <- ifelse((abs(rgbImage[3] - rgbImage[6])>eps) | (abs(rgbImage[4] - rgbImage[7])>eps) | (abs(rgbImage[5] - rgbImage[8])>eps),0,rgbImage$b.value_ss)
 
 p_7 <- ggplot(data=rgbImage, aes(x=x, y=y, col=rgb(r.value_ss_gone,g.value_ss_gone,b.value_ss_gone))) + 
     ggtitle("bluejay - gone, smoothing spline")+
@@ -221,9 +222,9 @@ p_7
 ```
 ```{r}
 eps <- 0.3
-rgbImage$r.value_ss_gone <- ifelse((abs(rgbImage[3] - rgbImage[6])>eps),1,rgbImage$r.value_ss)
-rgbImage$g.value_ss_gone <- ifelse((abs(rgbImage[4] - rgbImage[7])>eps),1,rgbImage$g.value_ss)
-rgbImage$b.value_ss_gone <- ifelse((abs(rgbImage[5] - rgbImage[8])>eps),1,rgbImage$b.value_ss)
+rgbImage$r.value_ss_gone <- ifelse((abs(rgbImage[3] - rgbImage[6])>eps) | (abs(rgbImage[4] - rgbImage[7])>eps) | (abs(rgbImage[5] - rgbImage[8])>eps),0,rgbImage$r.value_ss)
+rgbImage$g.value_ss_gone <- ifelse((abs(rgbImage[3] - rgbImage[6])>eps) | (abs(rgbImage[4] - rgbImage[7])>eps) | (abs(rgbImage[5] - rgbImage[8])>eps),0,rgbImage$g.value_ss)
+rgbImage$b.value_ss_gone <- ifelse((abs(rgbImage[3] - rgbImage[6])>eps) | (abs(rgbImage[4] - rgbImage[7])>eps) | (abs(rgbImage[5] - rgbImage[8])>eps),0,rgbImage$b.value_ss)
 
 p_8 <- ggplot(data=rgbImage, aes(x=x, y=y, col=rgb(r.value_ss_gone,g.value_ss_gone,b.value_ss_gone))) + 
     ggtitle("bluejay - gone, smoothing spline")+
@@ -236,9 +237,9 @@ p_8
 
 ```{r}
 eps <- 0.4
-rgbImage$r.value_ss_gone <- ifelse((abs(rgbImage[3] - rgbImage[6])>eps),1,rgbImage$r.value_ss)
-rgbImage$g.value_ss_gone <- ifelse((abs(rgbImage[4] - rgbImage[7])>eps),1,rgbImage$g.value_ss)
-rgbImage$b.value_ss_gone <- ifelse((abs(rgbImage[5] - rgbImage[8])>eps),1,rgbImage$b.value_ss)
+rgbImage$r.value_ss_gone <- ifelse((abs(rgbImage[3] - rgbImage[6])>eps) | (abs(rgbImage[4] - rgbImage[7])>eps) | (abs(rgbImage[5] - rgbImage[8])>eps),0,rgbImage$r.value_ss)
+rgbImage$g.value_ss_gone <- ifelse((abs(rgbImage[3] - rgbImage[6])>eps) | (abs(rgbImage[4] - rgbImage[7])>eps) | (abs(rgbImage[5] - rgbImage[8])>eps),0,rgbImage$g.value_ss)
+rgbImage$b.value_ss_gone <- ifelse((abs(rgbImage[3] - rgbImage[6])>eps) | (abs(rgbImage[4] - rgbImage[7])>eps) | (abs(rgbImage[5] - rgbImage[8])>eps),0,rgbImage$b.value_ss)
 
 p_9 <- ggplot(data=rgbImage, aes(x=x, y=y, col=rgb(r.value_ss_gone,g.value_ss_gone,b.value_ss_gone))) + 
     ggtitle("bluejay - gone, smoothing spline")+
@@ -248,23 +249,45 @@ p_9 <- ggplot(data=rgbImage, aes(x=x, y=y, col=rgb(r.value_ss_gone,g.value_ss_go
 p_9
 ```
 
+
 ```{r}
 imagedata=rgbImage[,3:5]
 
-fviz_nbclust(imagedata, kmeans, method = "silhouette", k.max=4, nboot = 2)
+fviz_nbclust(imagedata, kmeans, method = "gap_stat", k.max=4, nboot = 2)
 ```
 
 ```{r}
-image_c = kmeans(imagedata, 3)
+image_c = kmeans(imagedata, 1)
 image_c$centers
 
 ```
 
 ```{r}
 colours <- rgb(image_c$centers[image_c$cluster, ])
-plot(y ~ x, data=rgbImage, main="bluejay - kmeans",
-     col = colours, 
-     asp = 1, pch = ".", cex=25)
+
+p_10 <- ggplot(data=rgbImage, aes(x=x, y=y, col=colours)) + 
+    ggtitle("bluejay - kmeans k=1")+
+    geom_point() + 
+    scale_color_identity()
+
+p_10
+```
+
+```{r}
+image_c2 = kmeans(imagedata, 2)
+image_c2$centers
+
+```
+
+```{r}
+colours2 <- rgb(image_c2$centers[image_c2$cluster, ])
+
+p_11 <- ggplot(data=rgbImage, aes(x=x, y=y, col=colours2)) + 
+    ggtitle("bluejay - kmeans k=2")+
+    geom_point() + 
+    scale_color_identity()
+
+p_11
 ```
 
 4. Do you need to scale your data or do you need dimension reduction? If so, perform a principle components analysis on a scaled, or not-scaled data depending on your needs.
@@ -295,39 +318,47 @@ removeZeros <- function(v){
   v[v !=0]
 }
 
-r_ <- rep(0,length(c_db$cluster))
-g_ <- rep(0,length(c_db$cluster))
-b_ <- rep(0,length(c_db$cluster))
-
-for (i in 1:max(c_db$cluster)){
-  c1 = c_db$cluster == i
-  if (is.nan(mean(removeZeros(as.vector(bluejay[,,1]*c1))))){
-    rtemp = 0
+clustvector2rgb <- function(cluster){
+  r_ <- rep(0,length(cluster))
+  g_ <- rep(0,length(cluster))
+  b_ <- rep(0,length(cluster))
+  
+  for (i in 1:max(cluster)){
+    c1 = cluster == i
+    if (is.nan(mean(removeZeros(as.vector(bluejay[,,1]*c1))))){
+      rtemp = 0
+    }
+    else {
+      rtemp = mean(removeZeros(as.vector(bluejay[,,1]*c1)))
+    }
+    if (is.nan(mean(removeZeros(as.vector(bluejay[,,2]*c1))))){
+      gtemp = 0
+    }
+    else {
+      gtemp = mean(removeZeros(as.vector(bluejay[,,2]*c1)))
+    }
+    if(is.nan(mean(removeZeros(as.vector(bluejay[,,3]*c1))))){
+      btemp = 0
+    }
+    else {
+      btemp = mean(removeZeros(as.vector(bluejay[,,3]*c1)))
+    }
+    r_ <- r_ + rtemp*c1
+    g_ <- g_ + gtemp*c1
+    b_ <- b_ + btemp*c1
+    if (any(is.nan(r_))){
+      print(which(is.nan(r_)))
+      print(i)
+      break
+    }
   }
-  else {
-    rtemp = mean(removeZeros(as.vector(bluejay[,,1]*c1)))
-  }
-  if (is.nan(mean(removeZeros(as.vector(bluejay[,,2]*c1))))){
-    gtemp = 0
-  }
-  else {
-    gtemp = mean(removeZeros(as.vector(bluejay[,,2]*c1)))
-  }
-  if(is.nan(mean(removeZeros(as.vector(bluejay[,,3]*c1))))){
-    btemp = 0
-  }
-  else {
-    btemp = mean(removeZeros(as.vector(bluejay[,,3]*c1)))
-  }
-  r_ <- r_ + rtemp*c1
-  g_ <- g_ + gtemp*c1
-  b_ <- b_ + btemp*c1
-  if (any(is.nan(r_))){
-    print(which(is.nan(r_)))
-    print(i)
-    break
-  }
+  return(cbind(r_,g_,b_))
 }
+
+r_g_b_ <- clustvector2rgb(c_db$cluster)
+r_ <- r_g_b_[,1]
+g_ <- r_g_b_[,2]
+b_ <- r_g_b_[,3]
 
 rgbImage_dbscan <- data.frame(
   x=rep(1:dm[2], each=dm[1]),
@@ -336,10 +367,14 @@ rgbImage_dbscan <- data.frame(
   g.value=as.vector(g_),
   b.value=as.vector(b_))
 
-plot(y ~ x, data=rgbImage_dbscan, main=" ... ",
-     col = rgb(rgbImage_dbscan[3:5]), 
-     asp = 1, pch = 15, cex=0.5)
+p_12 <- ggplot(data=rgbImage_dbscan, aes(x=x, y=y, col=rgb(r.value,g.value,b.value))) + 
+    ggtitle("bluejay - dbscan")+
+    geom_point() + 
+    scale_color_identity()
+
+p_12
 ```
+
 ```{r}
 eps = c(0.005,0.01,0.02,0.04,0.08)
 minPts = c(3,4,5,6,7)
@@ -355,44 +390,12 @@ for (i in 1:nrow(hyper_grid)) {
 
 ```{r}
 max(c_db1$cluster)
+table(c_db1$cluster)
 
-removeZeros <- function(v){
-  v[v !=0]
-  }
-
-r_ <- rep(0,length(c_db1$cluster))
-g_ <- rep(0,length(c_db1$cluster))
-b_ <- rep(0,length(c_db1$cluster))
-
-for (i in 1:max(c_db1$cluster)){
-  c1 = c_db1$cluster == i
-  if (is.nan(mean(removeZeros(as.vector(bluejay[,,1]*c1))))){
-    rtemp = 0
-  }
-  else {
-    rtemp = mean(removeZeros(as.vector(bluejay[,,1]*c1)))
-  }
-  if (is.nan(mean(removeZeros(as.vector(bluejay[,,2]*c1))))){
-    gtemp = 0
-  }
-  else {
-    gtemp = mean(removeZeros(as.vector(bluejay[,,2]*c1)))
-  }
-  if(is.nan(mean(removeZeros(as.vector(bluejay[,,3]*c1))))){
-    btemp = 0
-  }
-  else {
-    btemp = mean(removeZeros(as.vector(bluejay[,,3]*c1)))
-  }
-  r_ <- r_ + rtemp*c1
-  g_ <- g_ + gtemp*c1
-  b_ <- b_ + btemp*c1
-  if (any(is.nan(r_))){
-    print(which(is.nan(r_)))
-    print(i)
-    break
-  }
-}
+r_g_b_ <- clustvector2rgb(c_db1$cluster)
+r_ <- r_g_b_[,1]
+g_ <- r_g_b_[,2]
+b_ <- r_g_b_[,3]
 
 rgbImage_dbscan <- data.frame(
   x=rep(1:dm[2], each=dm[1]),
@@ -402,9 +405,12 @@ rgbImage_dbscan <- data.frame(
   b.value=as.vector(b_) )
 
 
-plot(y ~ x, data=rgbImage_dbscan, main=" ... ",
-     col = rgb(rgbImage_dbscan[3:5]), 
-     asp = 1, pch = 15, cex=0.5)
+p_13 <- ggplot(data=rgbImage_dbscan, aes(x=x, y=y, col=rgb(r.value,g.value,b.value))) + 
+    ggtitle("bluejay - dbscan")+
+    geom_point() + 
+    scale_color_identity()
+
+p_13
 ```
 
 
@@ -416,6 +422,37 @@ plot(y ~ x, data=rgbImage_dbscan, main=" ... ",
 
 2. Explain your choices on model parameters, and communicate your results.
 
+```{r}
+rgbImage_mat <- as.matrix(rgbImage[3:5])
+
+model_fm = stepFlexmix(rgbImage_mat~1, k=1:4, nrep=5,
+                     model=FLXMCmvnorm(),
+                     control=list(tolerance=1e-15, iter.max=1000))
+
+best_fit=getModel(model_fm, which = "BIC")
+prior(best_fit)
+best_fit@cluster
+
+r_g_b_ <- clustvector2rgb(best_fit@cluster)
+r_ <- r_g_b_[,1]
+g_ <- r_g_b_[,2]
+b_ <- r_g_b_[,3]
+
+rgbImage_dbscan <- data.frame(
+  x=rep(1:dm[2], each=dm[1]),
+  y=rep(dm[1]:1, dm[2]),
+  r.value=as.vector(r_),
+  g.value=as.vector(g_),
+  b.value=as.vector(b_) )
+
+
+p_14 <- ggplot(data=rgbImage_dbscan, aes(x=x, y=y, col=rgb(r.value,g.value,b.value))) + 
+    ggtitle("bluejay - flexmix, normal")+
+    geom_point() + 
+    scale_color_identity()
+
+p_14
+```
 
 ## Part 4: Deep Learning (20 points)
 
