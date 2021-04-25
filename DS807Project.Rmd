@@ -117,7 +117,7 @@ p_2
 ```
 
 ```{r}
-p_3 <- ggplot(rgbImage, aes(x=r.value))+
+p_3 <- ggplot(rgbImage, aes(x=b.value))+
   geom_histogram(bins = 100)
 p_3
 ```
@@ -457,9 +457,72 @@ p_14 <- ggplot(data=rgbImage_dbscan, aes(x=x, y=y, col=rgb(r.value,g.value,b.val
     scale_color_identity()
 
 p_14
-#
 ```
 
+```{r}
+#red
+r_components <- data.frame(percent = best_fit@prior[1], mean = best_fit@components$Comp.1[[1]]@parameters$center['r.value'], var = best_fit@components$Comp.1[[1]]@parameters$cov[1,1])
+r_components <- rbind(r_components, data.frame(percent = best_fit@prior[2], mean = best_fit@components$Comp.2[[1]]@parameters$center['r.value'], var = best_fit@components$Comp.2[[1]]@parameters$cov[1,1]))
+r_components <- rbind(r_components, data.frame(percent = best_fit@prior[3], mean = best_fit@components$Comp.3[[1]]@parameters$center['r.value'], var = best_fit@components$Comp.3[[1]]@parameters$cov[1,1]))
+r_components <- rbind(r_components, data.frame(percent = best_fit@prior[4], mean = best_fit@components$Comp.4[[1]]@parameters$center['r.value'], var = best_fit@components$Comp.4[[1]]@parameters$cov[1,1]))
+r_components
+
+dnormw <- function(x,mean,sd,w){
+  dnorm(x,mean,sd)*w
+}
+
+p_15 <- ggplot(rgbImage, aes(x=r.value))+
+  ggtitle("red - flexmix, components")+
+  geom_histogram(aes(y=..density..),bins = 100) +
+  stat_function(fun = dnormw, args = list(mean = r_components$mean[1], sd = sqrt(r_components$var[1]),w=r_components$percent[1])) + 
+  stat_function(fun = dnormw, args = list(mean = r_components$mean[2], sd = sqrt(r_components$var[2]),w=r_components$percent[2])) +
+  stat_function(fun = dnormw, args = list(mean = r_components$mean[3], sd = sqrt(r_components$var[3]),w=r_components$percent[3])) +
+  stat_function(fun = dnormw, args = list(mean = r_components$mean[4], sd = sqrt(r_components$var[4]),w=r_components$percent[4])) 
+
+
+p_15
+```
+
+```{r}
+#green
+g_components <- data.frame(percent = best_fit@prior[1], mean = best_fit@components$Comp.1[[1]]@parameters$center['g.value'], var = best_fit@components$Comp.1[[1]]@parameters$cov[2,2])
+g_components <- rbind(g_components, data.frame(percent = best_fit@prior[2], mean = best_fit@components$Comp.2[[1]]@parameters$center['g.value'], var = best_fit@components$Comp.2[[1]]@parameters$cov[2,2]))
+g_components <- rbind(g_components, data.frame(percent = best_fit@prior[3], mean = best_fit@components$Comp.3[[1]]@parameters$center['g.value'], var = best_fit@components$Comp.3[[1]]@parameters$cov[2,2]))
+g_components <- rbind(g_components, data.frame(percent = best_fit@prior[4], mean = best_fit@components$Comp.4[[1]]@parameters$center['g.value'], var = best_fit@components$Comp.4[[1]]@parameters$cov[2,2]))
+g_components
+
+p_16 <- ggplot(rgbImage, aes(x=g.value))+
+  ggtitle("green - flexmix, components")+
+  geom_histogram(aes(y=..density..),bins = 100) +
+  stat_function(fun = dnormw, args = list(mean = g_components$mean[1], sd = sqrt(g_components$var[1]),w=g_components$percent[1])) + 
+  stat_function(fun = dnormw, args = list(mean = g_components$mean[2], sd = sqrt(g_components$var[2]),w=g_components$percent[2])) +
+  stat_function(fun = dnormw, args = list(mean = g_components$mean[3], sd = sqrt(g_components$var[3]),w=g_components$percent[3])) +
+  stat_function(fun = dnormw, args = list(mean = g_components$mean[4], sd = sqrt(g_components$var[4]),w=g_components$percent[4])) 
+
+
+p_16
+
+```
+
+```{r}
+#blue
+b_components <- data.frame(percent = best_fit@prior[1], mean = best_fit@components$Comp.1[[1]]@parameters$center['b.value'], var = best_fit@components$Comp.1[[1]]@parameters$cov[3,3])
+b_components <- rbind(b_components, data.frame(percent = best_fit@prior[2], mean = best_fit@components$Comp.2[[1]]@parameters$center['b.value'], var = best_fit@components$Comp.2[[1]]@parameters$cov[3,3]))
+b_components <- rbind(b_components, data.frame(percent = best_fit@prior[3], mean = best_fit@components$Comp.3[[1]]@parameters$center['b.value'], var = best_fit@components$Comp.3[[1]]@parameters$cov[3,3]))
+b_components <- rbind(b_components, data.frame(percent = best_fit@prior[4], mean = best_fit@components$Comp.4[[1]]@parameters$center['b.value'], var = best_fit@components$Comp.4[[1]]@parameters$cov[3,3]))
+b_components
+
+p_17 <- ggplot(rgbImage, aes(x=b.value))+
+  ggtitle("blue - flexmix, components")+
+  geom_histogram(aes(y=..density..),bins = 100) +
+  stat_function(fun = dnormw, args = list(mean = b_components$mean[1], sd = sqrt(b_components$var[1]),w=b_components$percent[1])) + 
+  stat_function(fun = dnormw, args = list(mean = b_components$mean[2], sd = sqrt(b_components$var[2]),w=b_components$percent[2])) +
+  stat_function(fun = dnormw, args = list(mean = b_components$mean[3], sd = sqrt(b_components$var[3]),w=b_components$percent[3])) +
+  stat_function(fun = dnormw, args = list(mean = b_components$mean[4], sd = sqrt(b_components$var[4]),w=b_components$percent[4])) 
+
+
+p_17
+```
 ## Part 4: Deep Learning (20 points)
 
 1. Apply a type of neural network algorithm to your data.
