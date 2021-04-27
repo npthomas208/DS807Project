@@ -1,4 +1,4 @@
----
+--- 
 title: |
   | Final Project
   | DS 807: Modeling Unstructured Data
@@ -533,11 +533,11 @@ use_condaenv("r-tensorflow")
 nn = list()
 
 
-nn$csv <- as.list(read.delim("C:/UNH/GitHub/UNH/DS807/DS807Project/Images/Train/train.csv") %>%
+nn$csv <- as.list(read.delim("./Images/train.csv") %>%
   mutate(class = as.factor(class)))
 
 nn$train=list()
-nn$train$y = array(as.numeric(nn$csv$class, levels(nn$csv$class)), dim = c(length(nn$csv$file), 1))
+nn$train$y = array(as.numeric(nn$csv$class, levels(nn$csv$class))-1, dim = c(length(nn$csv$file), 1))
 
 nn$csv$image = rep(NA, length(nn$csv$file))
 
@@ -555,7 +555,7 @@ nn = list(train = nn$train)
 
 ```{r}
 nn$modelCNN = keras_model_sequential() %>%
-  layer_conv_2d(filters = 32, kernel_size = c(3,3), activation = "relu", input_shape = c(1024,2024, 2)) %>%
+  layer_conv_2d(filters = 32, kernel_size = c(3,3), activation = "relu", input_shape = c(1024,1024,3)) %>%
   layer_max_pooling_2d(pool_size = c(2,2)) %>%
   layer_conv_2d(filters = 64, kernel_size = c(3,3), activation = "relu") %>% 
   layer_max_pooling_2d(pool_size = c(2,2)) %>% 
@@ -569,7 +569,7 @@ summary(nn$modelCNN)
 nn$modelDense = nn$modelCNN %>% 
   layer_flatten() %>% 
   layer_dense(units = 64, activation = "relu") %>% 
-  layer_dense(units = 10, activation = "softmax")
+  layer_dense(units = 2, activation = "softmax")
 
 summary(nn$modelDense)
 ```
