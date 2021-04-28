@@ -1,4 +1,4 @@
---- 
+---  
 title: |
   | Final Project
   | DS 807: Modeling Unstructured Data
@@ -590,6 +590,19 @@ history <- nn$model %>%
     validation_split = 0.15,
     verbose = 2
   )
+```
+```{r}
+
+nn$test$y = c(0)
+
+nn$testimage$y = list(as.integer(outer(readJPEG("Images/Test/OIP.jfif"),  255)))
+
+nn$tarray <- function(x) aperm(x, seq_along(dim(x)))
+nn$test$x = nn$tarray(array(unlist(nn$testimage$y), c(length(nn$testimage$y),1024, 1024, 3)))
+
+
+nn$model %>%
+  predict_classes(nn$test$x)
 ```
 
 2. Explain your choices on model parameters, and communicate your results.
