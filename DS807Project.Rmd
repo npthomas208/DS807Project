@@ -627,29 +627,6 @@ nn$model %>%
     
 2. (10 points) What are your learning outcomes for this assignment? Please focus on your learning outcomes in terms of analysis, model interpretations, and R skills - it is up to you to include this part in your presentation or not.
 
-```{r}
-
-p_array <- par(mfrow=c(3,4))
-p_ <- rep(NA, 12)
-
-i=1
-for (i in 1:12){
-  rgbImage_ <- data.frame(
-  x=rep(1:1024, each=1024),
-  y=rep(1024:1, 1024),
-  r.value=rescale(as.vector(nn$train$x[i,,,1]), to=1, from=0),
-  g.value=rescale(as.vector(nn$train$x[i,,,2]), to=1, from=0),
-  b.value=rescale(as.vector(nn$train$x[i,,,3]), to=1, from=0))
-
-  p_[i] <- ggplot(data=rgbImage_, aes(x=x, y=y, col=rgb(r.value,g.value,b.value))) +
-    ggtitle("bluejays")+
-    geom_point() + 
-    scale_color_identity()
-
-  p_[[i]]
-}
-```
-
 
 ```{r}
 save.image(file = "presentation.Rdata")
