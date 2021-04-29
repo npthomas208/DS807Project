@@ -652,7 +652,6 @@ for (i in 1:12){
 
 
 ```{r}
-dummy=FALSE
 save.image(file = "presentation.Rdata")
 ```
 
