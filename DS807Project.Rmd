@@ -106,19 +106,23 @@ As can be seen above, the image is read in with each pixel defined.  This is ver
 
 ```{r}
 p_1 <- ggplot(rgbImage, aes(x=r.value))+
-  geom_histogram(bins = 100)
+  geom_histogram(bins = 100)+
+  ggtitle("red")
 p_1
 ```
+
 ```{r}
 p_2 <- ggplot(rgbImage, aes(x=g.value))+
-  geom_histogram(bins = 100)
+  geom_histogram(bins = 100)+
+  ggtitle("green")
 p_2
 
 ```
 
 ```{r}
 p_3 <- ggplot(rgbImage, aes(x=b.value))+
-  geom_histogram(bins = 100)
+  geom_histogram(bins = 100)+
+  ggtitle("blue")
 p_3
 ```
 
@@ -145,23 +149,18 @@ rgbImage_blued$y2 <- rgbImage_blued$y^2
 rgbImage_blued$x3 <- rgbImage_blued$x^3
 rgbImage_blued$y3 <- rgbImage_blued$y^3
 
-
-
 lmxy <- lm(b.value~x+y+x2+y2+x3+y3, data = rgbImage_blued)
 
 rgbImage_blued$x[which.max(predict(lmxy,newdata=rgbImage_blued))]
 rgbImage_blued$y[which.max(predict(lmxy,newdata=rgbImage_blued))]
 
-rgbImage_blued_max <- data.frame(
-  x=rep(1:dm[2], each=dm[1]),
-  y=rep(dm[1]:1, dm[2]),
-  r.value=as.vector(rep(0,length(bluejay[,,1]))),
-  g.value=as.vector(rep(0,length(bluejay[,,2]))),
-  b.value=as.vector(bluejay[,,3]))
+rgbImage_blued$b.value <- predict(lmxy, newdata=rgbImage_blued)
 
-rgbImage_blued_max$r.value[which.max(predict(lmxy,newdata=rgbImage_blued))] = 1
+rgbImage_blued$r.value[which.max(predict(lmxy,newdata=rgbImage_blued))] = 1
 
-p_5 <- ggplot(data=rgbImage_blued_max, aes(x=x, y=y, col=rgb(r.value,g.value,b.value))) + 
+rgbImage_blued$b.value[which(rgbImage_blued$b.value<0)] <- 0
+
+p_5 <- ggplot(data=rgbImage_blued, aes(x=x, y=y, col=rgb(r.value,g.value,b.value))) + 
     ggtitle("bluejay")+
     geom_point() + 
     scale_color_identity()
@@ -587,7 +586,7 @@ set.seed(1)
 history <- nn$model %>% 
   keras::fit(
     x = nn$train$x, y = nn$train$y,
-    epochs = 2,
+    epochs = 15,
     validation_split = 0.15,
     verbose = 2
   )
