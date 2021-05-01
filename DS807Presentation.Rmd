@@ -75,7 +75,7 @@ p_4
 ```
 
 ## EDA cont. {.smaller}
-Quadratic Model (blue only):
+Cubic Model (blue only):
 ```{r}
 lmxyb$call
 ```
