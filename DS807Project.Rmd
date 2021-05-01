@@ -149,20 +149,16 @@ rgbImage_blued$y2 <- rgbImage_blued$y^2
 rgbImage_blued$x3 <- rgbImage_blued$x^3
 rgbImage_blued$y3 <- rgbImage_blued$y^3
 
-lmxy <- lm(b.value~x+y+x2+y2+x3+y3, data = rgbImage_blued)
+lmxyb <- lm(b.value~x+y+x2+y2+x3+y3, data = rgbImage_blued)
+rgbImage_blued$b.value <- predict(lmxyb, newdata=rgbImage_blued)
 
-rgbImage_blued$x[which.max(predict(lmxy,newdata=rgbImage_blued))]
-rgbImage_blued$y[which.max(predict(lmxy,newdata=rgbImage_blued))]
-
-rgbImage_blued$b.value <- predict(lmxy, newdata=rgbImage_blued)
-
-rgbImage_blued$r.value[which.max(predict(lmxy,newdata=rgbImage_blued))] = 1
+rgbImage_blued$r.value[which.max(predict(lmxyb,newdata=rgbImage_blued))] = 1
 
 rgbImage_blued$b.value[which(rgbImage_blued$b.value<0)] <- 0
 
 p_5 <- ggplot(data=rgbImage_blued, aes(x=x, y=y, col=rgb(r.value,g.value,b.value))) + 
     ggtitle("bluejay")+
-    geom_point() + 
+    geom_point(size=2) + 
     scale_color_identity()
 
 p_5
@@ -429,7 +425,7 @@ p_13
 ```{r}
 rgbImage_mat <- as.matrix(rgbImage[3:5])
 
-model_fm = stepFlexmix(rgbImage_mat~1, k=1:4, nrep=5,
+model_fm = stepFlexmix(rgbImage_mat~1, k=1:7, nrep=5,
                      model=FLXMCmvnorm(),
                      control=list(tolerance=1e-15, iter.max=1000))
 
@@ -599,14 +595,20 @@ nn$csv <- as.list(read.delim("./Images/test.csv", sep= ",") %>%
 nn$test=list()
 nn$test$y = array(as.numeric(nn$csv$class, levels(nn$csv$class))-1, dim = c(length(nn$csv$file), 1))
 
-nn$csv$image = rep(NA, length(nn$csv$file))
+nn$test$x = rep(NA, length(nn$csv$file))
 
-for(i in 1:length(nn$csv$file)){
-  nn$csv$image[i] = list(as.integer(outer(readJPEG(paste("./Images/Test/", nn$csv$file[i], sep="")),  255)))
+#for(i in 1:length(nn$csv$file)){
+#  nn$csv$image[i] = list(as.integer(outer(readJPEG(paste("./Images/Test/", nn$csv$file[i], sep="")),  255)))
+#}
+i=1
+for (i in 1:length(nn$csv$file)){
+  nn$test$x[i] <- list(image_to_array(image_load(paste("./Images/Test/", nn$csv$file[i], sep=""),target_size = c(1024,1024))))
 }
 
-nn$tarray <- function(x) aperm(x, seq_along(dim(x)))
-nn$test$x = nn$tarray(array(unlist(nn$csv$image), c(length(nn$csv$image),1024, 1024, 3)))
+nn$test$x <- array(unlist(nn$test$x),c(7,1024,1024,3))
+
+print(max(nn$train$x[1,,,1]))
+print(max(nn$test$x[1,,,1]))
 
 nn = list(train = nn$train, test = nn$test, model = nn$model)
 
