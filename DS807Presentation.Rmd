@@ -189,6 +189,34 @@ p_13
 
 Used stepFlexmix to determine optimal number of Gaussian distributions. Optimized based on BIC.
 
+```{r}
+p_14
+```
+
+## Mixture cont.
+
+Resulting **red** color mixture model - 6 normal distributions:
+
+```{r}
+grid.arrange(p_15,p_15.1,nrow=1)
+```
+
+## Mixture cont.
+
+Resulting **green** color mixture model - 6 normal distributions:
+
+```{r}
+grid.arrange(p_16,p_16.1,nrow=1)
+```
+
+## Mixture cont.
+
+Resulting **blue** color mixture model - 6 normal distributions:
+
+```{r}
+grid.arrange(p_17,p_17.1,nrow=1)
+```
+
 ...
 
 1. Apply a mixture model based clustering to your data.

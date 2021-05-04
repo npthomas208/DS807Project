@@ -484,6 +484,27 @@ p_15
 ```
 
 ```{r}
+li1 <- list(mean = r_components$mean[1], sd = sqrt(r_components$var[1]),w=r_components$percent[1])
+li2 <- list(mean = r_components$mean[2], sd = sqrt(r_components$var[2]),w=r_components$percent[2])
+li3 <- list(mean = r_components$mean[3], sd = sqrt(r_components$var[3]),w=r_components$percent[3])
+li4 <- list(mean = r_components$mean[4], sd = sqrt(r_components$var[4]),w=r_components$percent[4])
+li5 <- list(mean = r_components$mean[5], sd = sqrt(r_components$var[5]),w=r_components$percent[5])
+li6 <- list(mean = r_components$mean[6], sd = sqrt(r_components$var[6]),w=r_components$percent[6])
+
+dnormw_mix<-function(x,li1,li2,li3,li4,li5,li6){
+  dnormw_sum <-   dnormw(x,li1$mean,li1$sd,li1$w) + dnormw(x,li2$mean,li2$sd,li2$w) + dnormw(x,li3$mean,li3$sd,li3$w) + dnormw(x,li4$mean,li4$sd,li4$w) + dnormw(x,li5$mean,li5$sd,li5$w) + dnormw(x,li6$mean,li6$sd,li6$w)
+  return(dnormw_sum)
+}
+
+p_15.1 <- ggplot(rgbImage, aes(x=r.value))+
+  ggtitle("red - flexmix, summed")+
+  geom_histogram(aes(y=..density..),bins = 100) +
+  stat_function(fun = dnormw_mix, args = list(li1 = li1, li2 = li2, li3 = li3, li4 = li4, li5 = li5, li6 = li6), color = "red",size=1.2)
+
+p_15.1
+```
+
+```{r}
 #green
 g_components <- data.frame(percent = best_fit@prior[1], mean = best_fit@components$Comp.1[[1]]@parameters$center['g.value'], var = best_fit@components$Comp.1[[1]]@parameters$cov[2,2])
 g_components <- rbind(g_components, data.frame(percent = best_fit@prior[2], mean = best_fit@components$Comp.2[[1]]@parameters$center['g.value'], var = best_fit@components$Comp.2[[1]]@parameters$cov[2,2]))
@@ -505,8 +526,24 @@ p_16 <- ggplot(rgbImage, aes(x=g.value))+
 
 
 p_16
-
 ```
+
+```{r}
+li1 <- list(mean = g_components$mean[1], sd = sqrt(g_components$var[1]),w=g_components$percent[1])
+li2 <- list(mean = g_components$mean[2], sd = sqrt(g_components$var[2]),w=g_components$percent[2])
+li3 <- list(mean = g_components$mean[3], sd = sqrt(g_components$var[3]),w=g_components$percent[3])
+li4 <- list(mean = g_components$mean[4], sd = sqrt(g_components$var[4]),w=g_components$percent[4])
+li5 <- list(mean = g_components$mean[5], sd = sqrt(g_components$var[5]),w=g_components$percent[5])
+li6 <- list(mean = g_components$mean[6], sd = sqrt(g_components$var[6]),w=g_components$percent[6])
+
+p_16.1 <- ggplot(rgbImage, aes(x=g.value))+
+  ggtitle("green - flexmix, summed")+
+  geom_histogram(aes(y=..density..),bins = 100) +
+  stat_function(fun = dnormw_mix, args = list(li1 = li1, li2 = li2, li3 = li3, li4 = li4, li5 = li5, li6 = li6), color = "dark green",size=1.2)
+
+p_16.1
+```
+
 
 ```{r}
 #blue
@@ -530,6 +567,22 @@ p_17 <- ggplot(rgbImage, aes(x=b.value))+
 
 
 p_17
+```
+
+```{r}
+li1 <- list(mean = b_components$mean[1], sd = sqrt(b_components$var[1]),w=b_components$percent[1])
+li2 <- list(mean = b_components$mean[2], sd = sqrt(b_components$var[2]),w=b_components$percent[2])
+li3 <- list(mean = b_components$mean[3], sd = sqrt(b_components$var[3]),w=b_components$percent[3])
+li4 <- list(mean = b_components$mean[4], sd = sqrt(b_components$var[4]),w=b_components$percent[4])
+li5 <- list(mean = b_components$mean[5], sd = sqrt(b_components$var[5]),w=b_components$percent[5])
+li6 <- list(mean = b_components$mean[6], sd = sqrt(b_components$var[6]),w=b_components$percent[6])
+
+p_17.1 <- ggplot(rgbImage, aes(x=b.value))+
+  ggtitle("blue - flexmix, summed")+
+  geom_histogram(aes(y=..density..),bins = 100) +
+  stat_function(fun = dnormw_mix, args = list(li1 = li1, li2 = li2, li3 = li3, li4 = li4, li5 = li5, li6 = li6), color = "blue",size=1.2)
+
+p_17.1
 ```
 ## Part 4: Deep Learning (20 points)
 
