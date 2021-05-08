@@ -21,6 +21,7 @@ library(tensorflow)
 library(dplyr)
 library(stringr)
 library(tfdatasets)
+library(tfruns)
 ```
 
 ## Data Requirements:
@@ -616,6 +617,9 @@ nn <- list(train = nn$train)
 set.seed(1)
 nn$modelCNN = keras_model_sequential() %>%
   layer_conv_2d(filters = 16, kernel_size = c(3,3), activation = "relu", input_shape = c(1024,1024,3)) %>%
+  layer_dropout(0.2) %>%
+  layer_conv_2d(filters = 16, kernel_size = c(3,3), activation = "relu") %>%
+  layer_dropout(0.2) %>%
   layer_max_pooling_2d(pool_size = c(2,2)) %>%
   layer_conv_2d(filters = 16, kernel_size = c(3,3), activation = "relu") #%>% 
   #layer_max_pooling_2d(pool_size = c(2,2)) %>% 
@@ -678,6 +682,29 @@ nn$test$y
 
 nn$model %>%
   predict_classes(nn$test$x)
+```
+
+
+# Hyperparameter tuning
+
+```{r}
+runs <- tuning_run("CNN_Train.R", 
+                   flags = list( 
+                       dropout1 = c(0.2, 0.3, 0.4),
+                       dropout2 = c(0.2, 0.3, 0.4), 
+                       kernel1 = c(3, 5, 7), 
+                       dense_units1=c(30, 128, 150)), 
+                   #echo=F,
+                   confirm=F,
+                   sample=.1)
+
+runs %>% 
+  filter(metric_val_accuracy == min(metric_val_accuracy)) %>% 
+  glimpse()
+
+training_run("CNN_Train.R")
+
+compare_runs()
 ```
 
 2. Explain your choices on model parameters, and communicate your results.
