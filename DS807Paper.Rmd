@@ -1,5 +1,5 @@
 ---
-title:  "DS807 Presentation"
+title:  "DS807 Paper"
 author: "Anthony Morin, Nate Thomas"
 output: html_document
 ---
@@ -16,23 +16,18 @@ We have elected to perform analysis on an image file. In an effort to expedite a
 
 ![analyzed image; \n Source: https://getwallpapers.com/wallpaper/full/f/d/7/1221234-most-popular-blue-jay-wallpaper-hd-1920x1218-for-iphone-5s.jpg](./Images/Test/OIP.jfif)
 
+The image considered in this project is read in as an array of R G B values (red, green, blue).
+
+We have endeavor to investigate image analysis from a number of perspectives.  In this effort we have used many algorithms learned in this class, DS807.  Our overall goal was to determine which methods could be used for object detection.  Many of the methods fail for similar reasons, outlined below.
+
 ## Image Read into R as a plot: {.smaller}
+
+This is the image after being read into R, and ploted using a scatter plot.
 
 ```{r}
 p_0
 ```
 
-## Image Comparison - more to follow: {.smaller}
-![](./Images/Test/OIP.jfif){width=5%}
-
-For image comparison we downloaded all blue jay and hammer images from OpenImages https://storage.googleapis.com/openimages/web/download.html
-
-![bluejay](./Images/Train/0a4ffad5e0967cfa.jpg){width=20%}
-![bluejay](./Images/Train/2cdde11a66136f27.jpg){width=20%}
-![hammer](./Images/Train/04da7971353f617c.jpg){width=20%}
-![hammer](./Images/Train/4dda68611d5a1cd2.jpg){width=20%}
-
-... etc. total of 93 images. 40 blue jays. 53 hammers.
 
 ## Part 1: Exploratory Data Analysis (EDA) {.smaller}
 
@@ -49,23 +44,25 @@ As can be seen above, the image is read in with each pixel defined.  This is ver
 
 ## EDA comt. {.smaller}
 
-Distributions of Red, Green, and Blue pixel intensities:
+Distributions of Red, Green, and Blue pixel intensities shown below:
 ```{r}
 grid.arrange(p_1,p_2,p_3,nrow=1)
 ```
 
-As investigation, since we are looking at an image of a blue jay it may be of value to look only at the blue hue (isolation performed by zeroing `r.value`, and `g.value`)
+Based on the distributions, it appears reasonable to estimate these as mixtures of normal distributions (see section 3 Mixture Models).
 
 ## EDA cont. {.smaller}
 
-Potentially trivial we look at the image - filtered all red and green color for baseline comparison.
+As investigation, since we are looking at an image of a blue jay it may be of value to look only at the blue hue (isolation performed by zeroing `r.value`, and `g.value`)
+
+This is potentially trivial however the image is displayed for visual assessment.
 
 ```{r}
 p_4
 ```
 
 ## EDA cont. {.smaller}
-Cubic Model (blue only):
+A cubic Model was developed to locate the highest density of blue coloration. The maximum is indicated with a red dot:
 ```{r}
 lmxyb$call
 ```
@@ -73,6 +70,8 @@ lmxyb$call
 ```{r}
 p_5
 ```
+
+If it is known beforehand that the location of highest blue is likely where the blue jay is located, this may be a simple way to find blue jays in an image.  However, this assumes that the background is not saturated in blue (if the image is of the bird flying for example).
 
 ## EDA cont. {.smaller}
 Smoothing Spline:
@@ -84,14 +83,14 @@ gam_blue$call
 ```
 
 ## EDA cont. {.smaller}
-Smoothing Spline:
+Next a smoothing spline is used to approximate the color distribution in the image:
 
 ```{r}
 p_6
 ```
 
 ## EDA cont. {.smaller}
-Smoothing Spline:
+The location at which the image color intensities are farthest away (Manhattan distance) are indicated using black:
 
 ```{r eval=FALSE, echo=TRUE, wrap=TRUE}
 eps <- 0.2
@@ -113,12 +112,16 @@ rgbImage$b.value_ss_gone <- ifelse((abs(rgbImage[3] - rgbImage[6])>eps) |
 ## EDA cont. {.smaller}
 Smoothing Spline: $\epsilon$ = 0.2
 
+One can see that this does a relatively poor job of identifying the location of the bird.  
+
 ```{r}
 p_7
 ```
 
 ## EDA cont. {.smaller}
 Smoothing Spline: $\epsilon$ = 0.3
+
+The distance measure was extended.  If one is interested in object or edge detection, this method (dependant on an appropriately tuned $\epsilon$) appears to locate where an object of interest may exist.
 
 ```{r}
 p_8
@@ -127,15 +130,17 @@ p_8
 ## EDA cont. {.smaller}
 Smoothing Spline: $\epsilon$ = 0.4
 
+Continuing to extent the distance criteria appears to fail to identify edges on interest.  Therefore if one where using this technique it is imperative to tune $\epsilon$ for every image individually.
+
 ```{r}
 p_9
 ```
 
 ## Part 2: Clustering K-Means {.smaller}
 
-Clustering can be used to analyze the number of potneitally distinct colors - though clustering fails to perform image and object identification. 
+Clustering can be used to analyze the number of potentially distinct colors - though clustering fails to perform image and object identification. 
 
-Based on the gap statistic, the optimal number of clusters for K-means is `1`.
+Based on the gap statistic, the optimal number of clusters for K-means is `1`. This affectively flattens the entire image into a signle brown color.
 
 ```{r}
 p_10
@@ -143,7 +148,7 @@ p_10
 
 ## Clustering K-Means cont. {.smaller}
 
-Further example of how clustering is not capable of object identification.
+Further example of how clustering is not capable of object identification.  Even using `k=2` yields only a representation of the image with two hues, this does not take into account location interactions.
 
 ```{r}
 p_11
@@ -159,8 +164,10 @@ minPts = 2^c(1:7)
 ```
 eps = `r c_db$eps` ; minPts = `r c_db$minPts`
 
+One can see that this may be useful in object detection, but not in object identification.  The highest number of un-clustered pixels (displayed in black) could be used to identify possibly unique colors. The average x and y values of unclustered pixels were averaged, and indicated with a red dot.
+
 ```{r}
-p_12
+grid.arrange(p_12,p_12.1,nrow=1)
 ```
 
 ## Clustering DBSCAN {.smaller}
@@ -169,10 +176,12 @@ p_12
 eps = c(0.005,0.01,0.02,0.04,0.08)
 minPts = c(3,4,5,6,7)
 ```
-
 eps = `r c_db1$eps` ; minPts = `r c_db1$minPts`
+
+It appears that further parameter search (based narrowed ranges) also continues to identify a potential object.
+
 ```{r}
-p_13
+grid.arrange(p_13,p_13.1,nrow=1)
 ```
 
 ## Part 3: Mixture Models {.smaller}
@@ -212,6 +221,20 @@ grid.arrange(p_17,p_17.1,nrow=1)
 1. Apply a mixture model based clustering to your data.
 
 2. Explain your choices on model parameters, and communicate your results.
+
+
+## Image Comparison - more to follow: {.smaller}
+
+![](./Images/Test/OIP.jfif){width=5%}
+
+For image comparison we downloaded all blue jay and hammer images from OpenImages https://storage.googleapis.com/openimages/web/download.html
+
+![bluejay](./Images/Train/0a4ffad5e0967cfa.jpg){width=20%}
+![bluejay](./Images/Train/2cdde11a66136f27.jpg){width=20%}
+![hammer](./Images/Train/04da7971353f617c.jpg){width=20%}
+![hammer](./Images/Train/4dda68611d5a1cd2.jpg){width=20%}
+
+... etc. total of 93 images. 40 blue jays. 53 hammers.
 
 
 ## Part 4: Deep Learning (20 points)

@@ -327,19 +327,19 @@ clustvector2rgb <- function(cluster){
   for (i in 1:max(cluster)){
     c1 = cluster == i
     if (is.nan(mean(removeZeros(as.vector(bluejay[,,1]*c1))))){
-      rtemp = 0
+      rtemp = 0.0
     }
     else {
       rtemp = mean(removeZeros(as.vector(bluejay[,,1]*c1)))
     }
     if (is.nan(mean(removeZeros(as.vector(bluejay[,,2]*c1))))){
-      gtemp = 0
+      gtemp = 0.0
     }
     else {
       gtemp = mean(removeZeros(as.vector(bluejay[,,2]*c1)))
     }
     if(is.nan(mean(removeZeros(as.vector(bluejay[,,3]*c1))))){
-      btemp = 0
+      btemp = 0.0
     }
     else {
       btemp = mean(removeZeros(as.vector(bluejay[,,3]*c1)))
@@ -374,6 +374,30 @@ p_12 <- ggplot(data=rgbImage_dbscan, aes(x=x, y=y, col=rgb(r.value,g.value,b.val
     scale_color_identity()
 
 p_12
+```
+
+```{r}
+rgbImage_dbscan1 <- rgbImage_dbscan
+
+clust0<-list
+clust0x <- rgbImage_dbscan1 %>% select(x) %>% filter((rgbImage_dbscan1$r.value == 0.0) & (rgbImage_dbscan1$g.value == 0.0) & (rgbImage_dbscan1$b.value == 0.0)) %>% unlist()
+clust0y <- rgbImage_dbscan1 %>% select(y) %>% filter((rgbImage_dbscan1$r.value == 0.0) & (rgbImage_dbscan1$g.value == 0.0) & (rgbImage_dbscan1$b.value == 0.0)) %>% unlist()
+
+xcenter <- round(mean(clust0x),0)
+ycenter <- round(mean(clust0y),0)
+
+which((rgbImage_dbscan1$x == xcenter) & (rgbImage_dbscan1$y == ycenter))
+
+rgbImage_dbscan1$r.value[(rgbImage_dbscan1$x == xcenter) & (rgbImage_dbscan1$y == ycenter)] = 1.0 
+rgbImage_dbscan1$g.value[(rgbImage_dbscan1$x == xcenter) & (rgbImage_dbscan1$y == ycenter)] = 0.0
+rgbImage_dbscan1$b.value[(rgbImage_dbscan1$x == xcenter) & (rgbImage_dbscan1$y == ycenter)] = 0.0
+
+p_12.1 <- ggplot(data=rgbImage_dbscan1, aes(x=x, y=y, col=rgb(r.value,g.value,b.value))) + 
+    ggtitle("bluejay - dbscan centered")+
+    geom_point() + 
+    scale_color_identity()
+
+p_12.1
 ```
 
 ```{r}
@@ -412,6 +436,30 @@ p_13 <- ggplot(data=rgbImage_dbscan, aes(x=x, y=y, col=rgb(r.value,g.value,b.val
     scale_color_identity()
 
 p_13
+```
+
+```{r}
+rgbImage_dbscan1 <- rgbImage_dbscan
+
+clust0<-list
+clust0x <- rgbImage_dbscan1 %>% select(x) %>% filter((rgbImage_dbscan1$r.value == 0.0) & (rgbImage_dbscan1$g.value == 0.0) & (rgbImage_dbscan1$b.value == 0.0)) %>% unlist()
+clust0y <- rgbImage_dbscan1 %>% select(y) %>% filter((rgbImage_dbscan1$r.value == 0.0) & (rgbImage_dbscan1$g.value == 0.0) & (rgbImage_dbscan1$b.value == 0.0)) %>% unlist()
+
+xcenter <- round(mean(clust0x),0)
+ycenter <- round(mean(clust0y),0)
+
+which((rgbImage_dbscan1$x == xcenter) & (rgbImage_dbscan1$y == ycenter))
+
+rgbImage_dbscan1$r.value[(rgbImage_dbscan1$x == xcenter) & (rgbImage_dbscan1$y == ycenter)] = 1.0 
+rgbImage_dbscan1$g.value[(rgbImage_dbscan1$x == xcenter) & (rgbImage_dbscan1$y == ycenter)] = 0.0
+rgbImage_dbscan1$b.value[(rgbImage_dbscan1$x == xcenter) & (rgbImage_dbscan1$y == ycenter)] = 0.0
+
+p_13.1 <- ggplot(data=rgbImage_dbscan1, aes(x=x, y=y, col=rgb(r.value,g.value,b.value))) + 
+    ggtitle("bluejay - dbscan centered")+
+    geom_point() + 
+    scale_color_identity()
+
+p_13.1
 ```
 
 
@@ -616,12 +664,12 @@ nn <- list(train = nn$train)
 ```{r}
 set.seed(1)
 nn$modelCNN = keras_model_sequential() %>%
-  layer_conv_2d(filters = 16, kernel_size = c(3,3), activation = "relu", input_shape = c(1024,1024,3)) %>%
+  layer_conv_2d(filters = 32, kernel_size = c(5,5), activation = "relu", input_shape = c(1024,1024,3)) %>%
   layer_dropout(0.2) %>%
-  layer_conv_2d(filters = 16, kernel_size = c(3,3), activation = "relu") %>%
+  layer_conv_2d(filters = 16, kernel_size = c(5,5), activation = "relu") %>%
   layer_dropout(0.2) %>%
   layer_max_pooling_2d(pool_size = c(2,2)) %>%
-  layer_conv_2d(filters = 16, kernel_size = c(3,3), activation = "relu") #%>% 
+  layer_conv_2d(filters = 16, kernel_size = c(5,5), activation = "relu") #%>% 
   #layer_max_pooling_2d(pool_size = c(2,2)) %>% 
   #layer_conv_2d(filters = 64, kernel_size = c(3,3), activation = "relu")
 

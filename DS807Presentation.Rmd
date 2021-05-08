@@ -143,7 +143,7 @@ p_9
 
 ## Part 2: Clustering K-Means {.smaller}
 
-Clustering can be used to analyze the number of potneitally distinct colors - though clustering fails to perform image and object identification. 
+Clustering can be used to analyze the number of potentially distinct colors - though clustering fails to perform image and object identification. 
 
 Based on the gap statistic, the optimal number of clusters for K-means is `1`.
 
@@ -168,9 +168,8 @@ eps = 10^c(-5:5)
 minPts = 2^c(1:7)
 ```
 eps = `r c_db$eps` ; minPts = `r c_db$minPts`
-
 ```{r}
-p_12
+grid.arrange(p_12,p_12.1,nrow=1)
 ```
 
 ## Clustering DBSCAN {.smaller}
@@ -179,10 +178,9 @@ p_12
 eps = c(0.005,0.01,0.02,0.04,0.08)
 minPts = c(3,4,5,6,7)
 ```
-
 eps = `r c_db1$eps` ; minPts = `r c_db1$minPts`
 ```{r}
-p_13
+grid.arrange(p_13,p_13.1,nrow=1)
 ```
 
 ## Part 3: Mixture Models {.smaller}
