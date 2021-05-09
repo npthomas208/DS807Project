@@ -1,0 +1,6 @@
+{
+  "dropout1": 0.3,
+  "dropout2": 0.3,
+  "kernel1": 5,
+  "dense_units1": 150
+}

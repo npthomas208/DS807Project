@@ -1,0 +1,4 @@
+{
+  "message": "object 'model' not found",
+  "traceback": ["evaluate(., nn$test$x, nn$test$y, verbose = 0)", "model %>% evaluate(nn$test$x, nn$test$y, verbose = 0)", "eval(ei, envir)", "eval(ei, envir)", "withVisible(eval(ei, envir))", "tuning_run(\"CNN_Train.R\", flags = list(dropout1 = c(0.2, 0.3, \n    0.4), dropout2 = c(0.2, 0.3, 0.4), kernel1 = c(3, 5, 7), \n    dense_units1 = c(30, 128, 150)), confirm = F)"]
+}

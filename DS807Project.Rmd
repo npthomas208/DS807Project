@@ -594,8 +594,16 @@ use_condaenv("r-tensorflow")
 
 nn = list()
 
+nn$scale = function(img, s)
+{
+  w = round(s * dim(img)[2])
+  h = round(s * dim(img)[3])
+  
+  jpeg()
+}
 
-nn$csv <- as.list(read.delim("./Images/train.csv") %>%
+
+nn$csv <- as.list(read.delim("./Images/Train/Scaled/train.csv") %>%
   mutate(class = as.factor(class)))
 
 nn$train=list()
@@ -604,11 +612,11 @@ nn$train$y = array(as.numeric(nn$csv$class, levels(nn$csv$class))-1, dim = c(len
 nn$csv$image = rep(NA, length(nn$csv$file))
 
 for(i in 1:length(nn$csv$file)){
-  nn$csv$image[i] = list(as.integer(outer(readJPEG(paste("./Images/Train/", nn$csv$file[i], sep="")),  255)))
+  nn$csv$image[i] = list(as.integer(outer(readJPEG(paste("./Images/Train/Scaled/", nn$csv$file[i], sep="")),  255)))
 }
 
 nn$tarray <- function(x) aperm(x, seq_along(dim(x)))
-nn$train$x = nn$tarray(array(unlist(nn$csv$image), c(length(nn$csv$image),1024, 1024, 3)))
+nn$train$x = nn$tarray(array(unlist(nn$csv$image), c(length(nn$csv$image),128, 128, 3)))
 
 nn <- list(train = nn$train)
 ```
@@ -616,12 +624,12 @@ nn <- list(train = nn$train)
 ```{r}
 set.seed(1)
 nn$modelCNN = keras_model_sequential() %>%
-  layer_conv_2d(filters = 16, kernel_size = c(3,3), activation = "relu", input_shape = c(1024,1024,3)) %>%
+  layer_conv_2d(filters = 32, kernel_size = c(7,7), activation = "relu", input_shape = c(128,128,3)) %>%
   layer_dropout(0.2) %>%
-  layer_conv_2d(filters = 16, kernel_size = c(3,3), activation = "relu") %>%
+  layer_conv_2d(filters = 32, kernel_size = c(3,3), activation = "relu") %>%
   layer_dropout(0.2) %>%
   layer_max_pooling_2d(pool_size = c(2,2)) %>%
-  layer_conv_2d(filters = 16, kernel_size = c(3,3), activation = "relu") #%>% 
+  layer_conv_2d(filters = 32, kernel_size = c(3,3), activation = "relu") #%>% 
   #layer_max_pooling_2d(pool_size = c(2,2)) %>% 
   #layer_conv_2d(filters = 64, kernel_size = c(3,3), activation = "relu")
 
@@ -653,13 +661,13 @@ history <- nn$model %>%
   keras::fit(
     x = nn$train$x, y = nn$train$y,
     epochs = 15,
-    validation_split = 0.15,
+    validation_split = 0.5,
     verbose = 2
   )
 ```
 
 ```{r}
-nn$csv <- as.list(read.delim("./Images/test.csv", sep= ",") %>%
+nn$csv <- as.list(read.delim("./Images/Test/Scaled/test.csv", sep= ",") %>%
   mutate(class = as.factor(class)))
 
 nn$test=list()
@@ -668,7 +676,7 @@ nn$test$y = array(as.numeric(nn$csv$class, levels(nn$csv$class))-1, dim = c(leng
 nn$test$x = rep(NA, length(nn$csv$file))
 
 for (i in 1:length(nn$csv$file)){
-  nn$test$x[i] <- list(image_to_array(image_load(paste("./Images/Test/", nn$csv$file[i], sep=""),target_size = c(1024,1024))))
+  nn$test$x[i] <- list(image_to_array(image_load(paste("./Images/Test/Scaled/", nn$csv$file[i], sep=""),target_size = c(1024,1024))))
 }
 
 nn$test$x <- array(unlist(nn$test$x),c(7,1024,1024,3))

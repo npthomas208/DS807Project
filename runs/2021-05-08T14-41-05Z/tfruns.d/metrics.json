@@ -1,0 +1,6 @@
+{
+  "loss": [93351.5234, 5875.3872, 1113.6597, 228.8675, 413.8791, 220.3902, null, null, null, null],
+  "accuracy": [0.4937, 0.5063, 0.7595, 0.8861, 0.8734, 0.9494, null, null, null, null],
+  "val_loss": [5675.0288, 0, 0, 0, 0, 0, null, null, null, null],
+  "val_accuracy": [0, 1, 1, 1, 1, 1, null, null, null, null]
+}
