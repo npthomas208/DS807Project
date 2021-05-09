@@ -34,7 +34,7 @@ p_0
 ```
 
 ## Image Comparison - more to follow: {.smaller}
-![](./Images/Test/OIP.jfif){width=5%}
+![](./Images/Test/OIP.jfif){width=30%}
 
 For image comparison we downloaded all blue jay and hammer images from OpenImages https://storage.googleapis.com/openimages/web/download.html
 
@@ -47,7 +47,7 @@ For image comparison we downloaded all blue jay and hammer images from OpenImage
 
 ## Part 1: Exploratory Data Analysis (EDA) {.smaller}
 
-Purpose: Using the methods we have learned in this class, through trial and error, we will look at the usefulness of each for image analysis and classification.
+Purpose: Using the methods we have learned in this class, through trial and error, we will look at the usefulness of each for image analysis (object detection and object identification).
 
 `NA` was confirmed to be absent:
 ```{r echo=TRUE}
@@ -269,33 +269,26 @@ None of this tuning had an impact on the output
 
 ## Part 5: Conclusion {.smaller}
 
-1. (10 points) Based on the purpose of your analysis stated in Part 1, which analysis did a good/better/satisfactory job? How do you think you can improve the analysis?
+Purpose of your analysis: 
 
 * DBScan can be used to discriminate on the presence or absence of an object compared to the background
 
-* Deep learning techniques are the only viable set of algorithms for object detection
-  * Our neural net did not have a sufficiently large training set to solve our targeted problem.
-    
-2. (10 points) What are your learning outcomes for this assignment? Please focus on your learning outcomes in terms of analysis, model interpretations, and R skills - it is up to you to include this part in your presentation or not.
+* Deep learning techniques are the only viable set of algorithms for object identification.
 
-* Classical models may be used to select features from an image, provided that the contents are already known
+Analysis Improvement: 
+
+  * Our neural net did not have a sufficiently large training set to solve our targeted problem.
+
+## Part 5: Conclusion cont. {.smaller}
+    
+Learning Outcomes:
+
+* Classical models may be used to select features from an image, provided that the contents are already known.
 
 * When used in conjunction with proper image preprocessing, basic object detection can be achieved with DBScan
 
-* Keras/Tensorflow is not ideal for object detection when the test set is small.
+* Keras/Tensorflow is not ideal for object detection when the train set is small.
+
   * We observed that it appeared to memorize all of the training images, and thus perfectly predict them during training, but it would not extrapolate onto the new data.
 
 * Other techniques such as OpenCV or evolutionary neural nets may have been able to achieve better results with the data we had.
-
-
-- **Decision/why?**: Explain your reasoning behind your choice of the procedure, set of variables and such for the question. 
-
-    - Explain why you use the procedure/model/variables
-    - To exceed this criterion, describe steps taken to implement the procedure in a non technical way.
-
-
-- **Communication of your findings**: Explain your results.
-
-    - Explain why you think one model is better than the other.
-    - To exceed this criterion, explain your model in a non technical way.
-
