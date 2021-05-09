@@ -271,9 +271,21 @@ None of this tuning had an impact on the output
 
 1. (10 points) Based on the purpose of your analysis stated in Part 1, which analysis did a good/better/satisfactory job? How do you think you can improve the analysis?
 
+* DBScan can be used to discriminate on the presence or absence of an object compared to the background
+
+* Deep learning techniques are the only viable set of algorithms for object detection
+  * Our neural net did not have a sufficiently large training set to solve our targeted problem.
     
 2. (10 points) What are your learning outcomes for this assignment? Please focus on your learning outcomes in terms of analysis, model interpretations, and R skills - it is up to you to include this part in your presentation or not.
 
+* Classical models may be used to select features from an image, provided that the contents are already known
+
+* When used in conjunction with proper image preprocessing, basic object detection can be achieved with DBScan
+
+* Keras/Tensorflow is not ideal for object detection when the test set is small.
+  * We observed that it appeared to memorize all of the training images, and thus perfectly predict them during training, but it would not extrapolate onto the new data.
+
+* Other techniques such as OpenCV or evolutionary neural nets may have been able to achieve better results with the data we had.
 
 
 - **Decision/why?**: Explain your reasoning behind your choice of the procedure, set of variables and such for the question. 
