@@ -215,18 +215,24 @@ Resulting **blue** color mixture model - 6 normal distributions:
 grid.arrange(p_17,p_17.1,nrow=1)
 ```
 
-...
-
-1. Apply a mixture model based clustering to your data.
-
-2. Explain your choices on model parameters, and communicate your results.
-
-
 ## Part 4: Deep Learning (20 points)
 
 1. Apply a type of neural network algorithm to your data.
 
+## Deep Learning cont.
 2. Explain your choices on model parameters, and communicate your results.
+
+* Dense Layers - More and Fewer
+* Dense Layer Nodes - More and Fewer
+* Loss Functions - Poisson, Categorical Crossentropy
+* CNN Layers - More
+* CNN Kernels - Larger
+* CNN Filters - More
+* Additional training data
+* Number of Epochs - More
+* Validation split - increased
+
+None of this tuning had an impact on the output
 
 
 ## Part 5: Conclusion (20 points)

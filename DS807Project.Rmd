@@ -702,7 +702,8 @@ history <- nn$model %>%
     x = nn$train$x, y = nn$train$y,
     epochs = 15,
     validation_split = 0.15,
-    verbose = 2
+    verbose = 2,
+    confirm = F
   )
 ```
 
