@@ -1,5 +1,5 @@
 ---
-title:  "DS807 Presentation"
+title:  "DS807 Presentation - Blue Jay Image Analysis"
 author: "Anthony Morin, Nate Thomas"
 output: ioslides_presentation
 ---

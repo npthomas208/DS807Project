@@ -216,12 +216,6 @@ Resulting **blue** color mixture model - 6 normal distributions:
 grid.arrange(p_17,p_17.1,nrow=1)
 ```
 
-...
-
-1. Apply a mixture model based clustering to your data.
-
-2. Explain your choices on model parameters, and communicate your results.
-
 
 ## Image Comparison - more to follow: {.smaller}
 
@@ -237,30 +231,79 @@ For image comparison we downloaded all blue jay and hammer images from OpenImage
 ... etc. total of 93 images. 40 blue jays. 53 hammers.
 
 
-## Part 4: Deep Learning (20 points)
+## Part 4: Deep Learning {.smaller}
+```{r}
+nn.model
+```
 
-1. Apply a type of neural network algorithm to your data.
+## Deep Learning cont. {.smaller}
+```{r}
+p_hist
+```
 
-2. Explain your choices on model parameters, and communicate your results.
+## Deep Learning cont. {.smaller}
+Test Set, Blue Jays:
+
+![bluejay](./Images/Test/OIP.jfif){width=15%}
+![bluejay](./Images/Test/OIP (1).jfif){width=15%}
+![bluejay](./Images/Test/OIP (2).jfif){width=15%}
+![bluejay](./Images/Test/OIP (3).jfif){width=15%}
+![bluejay](./Images/Test/OIP (4).jfif){width=15%}
+
+Test Set, Hammers:
+
+![hammer](./Images/Test/download.jfif){width=15%}
+![hammer](./Images/Test/download (1).jfif){width=15%}
+
+## Deep Learning cont. {.smaller}
+Prediction vector:
+```{r}
+pred.nn
+```
+... all hammers (?)
+
+## Deep Learning cont. {.smaller}
+<iframe src="./compare-runs-2021-05-09T17-50-08Z-2021-05-09T17-39-16Z.html"></iframe>
 
 
-## Part 5: Conclusion (20 points)
+## Deep Learning cont. {.smaller}
+Model parameter, and results considerations:
 
-1. (10 points) Based on the purpose of your analysis stated in Part 1, which analysis did a good/better/satisfactory job? How do you think you can improve the analysis?
+* Dense Layers - More and Fewer
+* Dense Layer Nodes - More and Fewer
+* Loss Functions - Poisson, Categorical Crossentropy
+* CNN Layers - More
+* CNN Kernels - Larger
+* CNN Filters - More
+* Additional training data
+* Number of Epochs - More
+* Validation split - increased
 
+None of this tuning had an impact on the output
+
+
+## Part 5: Conclusion {.smaller}
+
+Purpose of your analysis: 
+
+* DBScan can be used to discriminate on the presence or absence of an object compared to the background
+
+* Deep learning techniques are the only viable set of algorithms for object identification.
+
+Analysis Improvement: 
+
+  * Our neural net did not have a sufficiently large training set to solve our targeted problem.
+
+## Part 5: Conclusion cont. {.smaller}
     
-2. (10 points) What are your learning outcomes for this assignment? Please focus on your learning outcomes in terms of analysis, model interpretations, and R skills - it is up to you to include this part in your presentation or not.
+Learning Outcomes:
 
+* Classical models may be used to select features from an image, provided that the contents are already known.
 
+* When used in conjunction with proper image preprocessing, basic object detection can be achieved with DBScan
 
-- **Decision/why?**: Explain your reasoning behind your choice of the procedure, set of variables and such for the question. 
+* Keras/Tensorflow is not ideal for object detection when the train set is small.
 
-    - Explain why you use the procedure/model/variables
-    - To exceed this criterion, describe steps taken to implement the procedure in a non technical way.
+  * We observed that it appeared to memorize all of the training images, and thus perfectly predict them during training, but it would not extrapolate onto the new data.
 
-
-- **Communication of your findings**: Explain your results.
-
-    - Explain why you think one model is better than the other.
-    - To exceed this criterion, explain your model in a non technical way.
-
+* Other techniques such as OpenCV or evolutionary neural nets may have been able to achieve better results with the data we had.
