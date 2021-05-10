@@ -35,7 +35,7 @@ p_0
 
 ## Part 1: Exploratory Data Analysis (EDA) {.smaller}
 
-Purpose: Using the methods we have learned in this class, through trial and error, we will look at the usefulness of each for image analysis (object detection and object identification).
+Purpose: Using the methods we have learned in this class, through trial and error, we will look at the usefulness of a selection for image analysis (object detection and object identification).
 
 `NA` was confirmed to be absent:
 ```{r echo=TRUE}
@@ -302,3 +302,11 @@ Learning Outcomes:
   * We observed that it appeared to memorize all of the training images, and thus perfectly predict them during training, but it would not extrapolate onto the new data.
 
 * Other techniques such as OpenCV or evolutionary neural nets may have been able to achieve better results with the data we had.
+
+## Q&A {.smaller}
+
+
+
+Also, thank you everyone for being an integral part of this first cohort in the UNH MSBA program! 
+
+Best of luck UNH MSBA Class of 2021 in all future endeavors!

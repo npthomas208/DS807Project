@@ -121,7 +121,7 @@ p_7
 ## EDA cont. {.smaller}
 Smoothing Spline: $\epsilon$ = 0.3
 
-The distance measure was extended.  If one is interested in object or edge detection, this method (dependant on an appropriately tuned $\epsilon$) appears to locate where an object of interest may exist.
+The distance measure was extended.  If one is interested in object or edge detection, this method (dependant on an appropriately tuned $\epsilon$) appears to locate where an object of interest may exist - in this case the blue jay.
 
 ```{r}
 p_8
