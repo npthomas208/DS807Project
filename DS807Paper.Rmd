@@ -188,6 +188,8 @@ grid.arrange(p_13,p_13.1,nrow=1)
 
 Used stepFlexmix to determine optimal number of Gaussian distributions. Optimized based on BIC.
 
+Similar to K-Means this is not useful in object detection or identification.
+
 ```{r}
 p_14
 ```
