@@ -1,5 +1,5 @@
 ---
-title:  "DS807 Presentation - Blue Jay Image Analysis"
+title:  "DS807 Presentation -  </br>Blue Jay Image Analysis"
 author: "Anthony Morin, Nate Thomas"
 output: ioslides_presentation
 ---
@@ -32,18 +32,6 @@ In an effort to expedite and remove subjectivity we selected a random image of a
 ```{r}
 p_0
 ```
-
-## Image Comparison - more to follow: {.smaller}
-![](./Images/Test/OIP.jfif){width=30%}
-
-For image comparison we downloaded all blue jay and hammer images from OpenImages https://storage.googleapis.com/openimages/web/download.html
-
-![bluejay](./Images/Train/0a4ffad5e0967cfa.jpg){width=20%}
-![bluejay](./Images/Train/2cdde11a66136f27.jpg){width=20%}
-![hammer](./Images/Train/04da7971353f617c.jpg){width=20%}
-![hammer](./Images/Train/4dda68611d5a1cd2.jpg){width=20%}
-
-... etc. total of 93 images. 40 blue jays. 53 hammers.
 
 ## Part 1: Exploratory Data Analysis (EDA) {.smaller}
 
@@ -93,6 +81,8 @@ gam_red$call
 gam_green$call
 gam_blue$call
 ```
+
+`rdf, gdf, bdf = 50`
 
 ## EDA cont. {.smaller}
 Smoothing Spline:
@@ -144,7 +134,7 @@ p_9
 
 ## Part 2: Clustering K-Means {.smaller}
 
-Clustering can be used to analyze the number of potentially distinct colors - though clustering fails to perform image and object identification. 
+Clustering can be used to analyze the number of potentially distinct colors - though clustering fails to perform object detection or identification. 
 
 Based on the gap statistic, the optimal number of clusters for K-means is `1`.
 
@@ -154,7 +144,7 @@ p_10
 
 ## Clustering K-Means cont. {.smaller}
 
-Further example of how clustering is not capable of object identification.
+Further example of how clustering is not capable of object detection or identification.
 
 ```{r}
 p_11
@@ -185,8 +175,9 @@ grid.arrange(p_13,p_13.1,nrow=1)
 ```
 
 ## Part 3: Mixture Models {.smaller}
+Used stepFlexmix to determine optimal number of Gaussian color distributions. Optimized based on BIC.
 
-Used stepFlexmix to determine optimal number of Gaussian distributions. Optimized based on BIC.
+Similar to K-Means this is not useful in object detection or identification.
 
 ```{r}
 p_14
@@ -221,6 +212,16 @@ grid.arrange(p_17,p_17.1,nrow=1)
 nn.model
 ```
 
+## Train Set: {.smaller}
+For image comparison we downloaded all blue jay and hammer images from OpenImages https://storage.googleapis.com/openimages/web/download.html
+
+![bluejay](./Images/Train/0a4ffad5e0967cfa.jpg){width=20%}
+![bluejay](./Images/Train/2cdde11a66136f27.jpg){width=20%}
+![hammer](./Images/Train/04da7971353f617c.jpg){width=20%}
+![hammer](./Images/Train/4dda68611d5a1cd2.jpg){width=20%}
+
+... etc. total of 93 images. 40 blue jays. 53 hammers.
+
 ## Deep Learning cont. {.smaller}
 ```{r}
 p_hist
@@ -245,6 +246,11 @@ Prediction vector:
 ```{r}
 pred.nn
 ```
+
+`hammer = 0`
+
+`bluejay = 1`
+
 ... all hammers (?)
 
 ## Deep Learning cont. {.smaller}
@@ -269,9 +275,13 @@ None of this tuning had an impact on the output
 
 ## Part 5: Conclusion {.smaller}
 
-Purpose of your analysis: 
+Conclusion based on purpose: 
 
-* DBScan can be used to discriminate on the presence or absence of an object compared to the background
+* GAM with smoothing spline on x and y axes, incorporating a difference criteria, can detect potential objects of interest. This is image specific analysis and requires oversight by the analyst to tune appropriately.
+
+* DBScan can be used to discriminate on the presence or absence of an object compared to the background.
+
+* K-Means and Mixture can assist in color complexity reduction but fail to detect or identify objects.
 
 * Deep learning techniques are the only viable set of algorithms for object identification.
 
@@ -285,7 +295,7 @@ Learning Outcomes:
 
 * Classical models may be used to select features from an image, provided that the contents are already known.
 
-* When used in conjunction with proper image preprocessing, basic object detection can be achieved with DBScan
+* When used in conjunction with proper image preprocessing, basic object detection can be achieved with DBScan.
 
 * Keras/Tensorflow is not ideal for object detection when the train set is small.
 

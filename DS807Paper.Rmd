@@ -216,11 +216,12 @@ Resulting **blue** color mixture model - 6 normal distributions:
 grid.arrange(p_17,p_17.1,nrow=1)
 ```
 
+## Part 4: Deep Learning {.smaller}
+```{r}
+nn.model
+```
 
-## Image Comparison - more to follow: {.smaller}
-
-![](./Images/Test/OIP.jfif){width=5%}
-
+## Train Set: {.smaller}
 For image comparison we downloaded all blue jay and hammer images from OpenImages https://storage.googleapis.com/openimages/web/download.html
 
 ![bluejay](./Images/Train/0a4ffad5e0967cfa.jpg){width=20%}
@@ -229,12 +230,6 @@ For image comparison we downloaded all blue jay and hammer images from OpenImage
 ![hammer](./Images/Train/4dda68611d5a1cd2.jpg){width=20%}
 
 ... etc. total of 93 images. 40 blue jays. 53 hammers.
-
-
-## Part 4: Deep Learning {.smaller}
-```{r}
-nn.model
-```
 
 ## Deep Learning cont. {.smaller}
 ```{r}
@@ -260,6 +255,11 @@ Prediction vector:
 ```{r}
 pred.nn
 ```
+
+`hammer = 0`
+
+`bluejay = 1`
+
 ... all hammers (?)
 
 ## Deep Learning cont. {.smaller}
@@ -284,9 +284,13 @@ None of this tuning had an impact on the output
 
 ## Part 5: Conclusion {.smaller}
 
-Purpose of your analysis: 
+Conclusion based on purpose: 
 
-* DBScan can be used to discriminate on the presence or absence of an object compared to the background
+* GAM with smoothing spline on x and y axes, incorporating a difference criteria, can detect potential objects of interest. This is image specific analysis and requires oversight by the analyst to tune appropriately.
+
+* DBScan can be used to discriminate on the presence or absence of an object compared to the background.
+
+* K-Means and Mixture can assist in color complexity reduction but fail to detect or identify objects.
 
 * Deep learning techniques are the only viable set of algorithms for object identification.
 
@@ -300,7 +304,7 @@ Learning Outcomes:
 
 * Classical models may be used to select features from an image, provided that the contents are already known.
 
-* When used in conjunction with proper image preprocessing, basic object detection can be achieved with DBScan
+* When used in conjunction with proper image preprocessing, basic object detection can be achieved with DBScan.
 
 * Keras/Tensorflow is not ideal for object detection when the train set is small.
 
